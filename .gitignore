@@ -1,0 +1,17 @@
+# Entorno virtual
+venv/
+
+# Archivos de Python
+__pycache__/
+*.pyc
+
+# Base de datos local
+backend/app/db/tutorias.db
+
+# Configuración local
+.env
+.vscode/
+.idea/
+
+# Otros
+*.log
