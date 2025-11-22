@@ -1,12 +1,20 @@
-from fastapi import FastAPI
+from pathlib import Path
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from .db.database import Base, engine, SessionLocal
-from .models import rol, usuario  # registra modelos
+from .models import rol, usuario
 from .models.rol import Rol
 from .models.usuario import Usuario
 from .core.security import hash_password
 from .api import auth as auth_router
 
+# BASE_DIR = carpeta raíz del proyecto (proyecto_tutorias)
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
+STATIC_DIR = FRONTEND_DIR / "static"
+TEMPLATES_DIR = FRONTEND_DIR / "templates"
 
 # Crear todas las tablas en la BD
 Base.metadata.create_all(bind=engine)
@@ -49,9 +57,14 @@ def init_data():
 # Inicializar datos al arrancar la app
 init_data()
 
+# 👇 SOLO UNA VEZ
 app = FastAPI(title="Sistema de Tutorías")
 
-# Registrar router de autenticación
+# Montar estáticos y templates usando rutas absolutas
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+# Registrar router API (auth)
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
 
 
@@ -63,3 +76,8 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse("auth/login.html", {"request": request})

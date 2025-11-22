@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de sesión - Sistema de Tutorías</title>
+    <link rel="stylesheet" href="/static/css/auth/login.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="login-card">
+            <div class="login-logo">
+                <!-- Aquí luego puedes poner el logo real -->
+                <span class="logo-placeholder">ST</span>
+            </div>
+
+            <div class="login-header">
+                <h1>Inicio de sesión</h1>
+                <p>
+                    ¿Eres nuevo usuario?
+                    <a href="#">Crear una cuenta</a>
+                </p>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="correo">Correo electrónico</label>
+                    <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required>
+                        <button type="button" class="toggle-password" id="toggle-password">
+                            👁
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <a href="#" class="forgot-link">¿Olvidó la contraseña?</a>
+                </div>
+
+                <p id="error-message" class="error" style="display:none;"></p>
+
+                <button type="submit" class="btn-primary">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/auth/login.js"></script>
+</body>
+</html>
