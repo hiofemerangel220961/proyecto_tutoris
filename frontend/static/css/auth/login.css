@@ -1,80 +1,128 @@
-/* Fondo general: degradado tipo diseño moderno */
-* {
+/* Reset básico */
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #4f46e5, #9333ea);
+}
+
+/* Fondo general con degradé */
+.login-page {
     min-height: 100vh;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #111827;
-}
-
-/* Contenedor para centrar la tarjeta */
-.page-wrapper {
-    width: 100%;
-    max-width: 1200px;
     padding: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: linear-gradient(135deg, #ffffff, #A9C7FF);
 }
 
-/* Tarjeta de login (estructura como la 1ª imagen) */
-.login-card {
+/* Contenedor principal (card grande) */
+.login-container {
     width: 100%;
-    max-width: 420px;
-    background: #f9fafb;
-    border-radius: 24px;
-    padding: 32px 32px 28px;
+    max-width: 1120px;
+    height: 560px;
+    background-color: #ffffff;
+    border-radius: 5px;          /* antes 24px */
+    overflow: hidden;
+    display: flex;
     box-shadow:
-        0 18px 45px rgba(15, 23, 42, 0.25),
+        0 20px 45px rgba(15, 23, 42, 0.18),
         0 0 0 1px rgba(148, 163, 184, 0.15);
 }
 
-/* Logo arriba (rectángulo de la 1ª imagen) */
-.login-logo {
-    width: 100%;
+/* Panel izquierdo */
+.login-left {
+    flex: 1.05;
+    background-color: #2E25AC;
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    flex-direction: column;
+    padding: 28px 36px;           /* un poco menos padding para que todo crezca visualmente */
+    color: #ffffff;
 }
 
-.logo-placeholder {
-    width: 120px;
-    height: 60px;
-    border-radius: 14px;
-    background: #e5e7eb;
+
+.login-left-header {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: #6b7280;
-    font-size: 1.1rem;
+    margin-bottom: 24px;
 }
 
-/* Títulos */
-.login-header h1 {
+/* Logo */
+.logo-image {
+    height: 50px;                 /* antes 36px */
+    width: auto;
+}
+
+/* Ilustración */
+.login-left-illustration {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.illustration-image {
+    max-width: 100%;
+    max-height: 330px;            /* antes 260px */
+    object-fit: contain;
+}
+
+/* Texto “Bienvenido” */
+.login-left-text {
+    margin-top: 24px;
+}
+
+.login-left-text h1 {
+    margin: 0 0 4px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.login-left-text p {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+/* Panel derecho */
+.login-right {
+    flex: 1;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 40px;
+}
+
+.login-right-inner {
+    width: 100%;
+    max-width: 360px;
+}
+
+/* Encabezado de login */
+.login-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
     font-weight: 700;
     color: #111827;
 }
 
 .login-header p {
-    margin: 4px 0 20px;
+    margin: 6px 0 24px;
     font-size: 0.9rem;
     color: #6b7280;
 }
 
 .login-header a {
-    color: #4f46e5;
-    text-decoration: none;
+    color: #4E44DC;
     font-weight: 600;
+    text-decoration: none;
 }
 
 .login-header a:hover {
@@ -85,29 +133,29 @@ body {
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 label {
     font-size: 0.85rem;
-    color: #4b5563;
+    color: #374151;
 }
 
 input {
     width: 100%;
-    padding: 0.6rem 0.75rem;
+    padding: 0.7rem 0.85rem;
     border-radius: 10px;
     border: 1px solid #d1d5db;
     font-size: 0.95rem;
     outline: none;
-    background-color: #ffffff;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    background-color: #f9fafb;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 input::placeholder {
@@ -115,11 +163,12 @@ input::placeholder {
 }
 
 input:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.3);
+    border-color: #4E44DC;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(78, 68, 220, 0.25);
 }
 
-/* Input de contraseña con botón de ver/ocultar */
+/* Campo de contraseña con ojito */
 .password-wrapper {
     position: relative;
     display: flex;
@@ -127,7 +176,7 @@ input:focus {
 }
 
 .password-wrapper input {
-    padding-right: 2.2rem;
+    padding-right: 2.4rem;
 }
 
 .toggle-password {
@@ -136,13 +185,13 @@ input:focus {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #6b7280;
     padding: 4px;
 }
 
 .toggle-password:hover {
-    color: #4f46e5;
+    color: #4E44DC;
 }
 
 /* Footer del formulario */
@@ -152,8 +201,8 @@ input:focus {
 }
 
 .forgot-link {
-    font-size: 0.8rem;
-    color: #4f46e5;
+    font-size: 0.82rem;
+    color: #4E44DC;
     text-decoration: none;
 }
 
@@ -163,12 +212,12 @@ input:focus {
 
 /* Botón principal */
 .btn-primary {
-    margin-top: 6px;
+    margin-top: 8px;
     width: 100%;
-    padding: 0.7rem;
+    padding: 0.75rem;
     border-radius: 999px;
     border: none;
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    background-color: #4E44DC; /* color de botón */
     color: #f9fafb;
     font-size: 0.95rem;
     font-weight: 600;
@@ -177,7 +226,7 @@ input:focus {
 }
 
 .btn-primary:hover {
-    box-shadow: 0 12px 22px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 12px 24px rgba(78, 68, 220, 0.35);
     transform: translateY(-1px);
 }
 
@@ -187,10 +236,59 @@ input:focus {
     opacity: 0.95;
 }
 
-/* Mensajes de error */
+/* Mensaje de error */
 .error {
     margin: 0;
-    margin-top: 4px;
     font-size: 0.8rem;
     color: #dc2626;
+}
+
+/* Responsive: en pantallas pequeñas, apilar paneles */
+@media (max-width: 900px) {
+    .login-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .login-left,
+    .login-right {
+        flex: none;
+        width: 100%;
+        height: auto;
+    }
+
+    .login-left {
+        border-radius: 24px 24px 0 0;
+    }
+
+    .login-right {
+        border-radius: 0 0 24px 24px;
+    }
+}
+
+/* Estilo del select igual que los inputs */
+select {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 0.95rem;
+    outline: none;
+    background-color: #f9fafb;
+    color: #111827;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+                      linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 8px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+select:focus {
+    border-color: #4E44DC;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(78, 68, 220, 0.25);
 }

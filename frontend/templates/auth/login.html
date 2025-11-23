@@ -6,45 +6,76 @@
     <link rel="stylesheet" href="/static/css/auth/login.css">
 </head>
 <body>
-    <div class="page-wrapper">
-        <div class="login-card">
-            <div class="login-logo">
-                <!-- Aquí luego puedes poner el logo real -->
-                <span class="logo-placeholder">ST</span>
+    <div class="login-page">
+        <div class="login-container">
+            <!-- Panel izquierdo -->
+            <div class="login-left">
+                <div class="login-left-header">
+                    <!-- Logo (ajusta la ruta del src a tu archivo real) -->
+                    <img src="/static/img/logo-tutoris.png" alt="Logo Tutoris" class="logo-image">
+                </div>
+
+                <div class="login-left-illustration">
+                    <!-- Ilustración (ajusta la ruta del src a tu archivo real) -->
+                    <img src="/static/img/login-illustration.png"
+                         alt="Ilustración de tutorías"
+                         class="illustration-image">
+                </div>
+
+                <div class="login-left-text">
+                    <h1>Bienvenido</h1>
+                    <p>A tu sistema de gestión de tutorías UNSAAC</p>
+                </div>
             </div>
 
-            <div class="login-header">
-                <h1>Inicio de sesión</h1>
-                <p>
-                    ¿Eres nuevo usuario?
-                    <a href="/register">Crear una cuenta</a>
-                </p>
+            <!-- Panel derecho -->
+            <div class="login-right">
+                <div class="login-right-inner">
+                    <header class="login-header">
+                        <h2>Inicio de sesión</h2>
+                        <p>
+                            ¿Eres nuevo usuario?
+                            <a href="/register">Crear una cuenta</a>
+                        </p>
+                    </header>
+
+                    <form id="login-form" class="login-form">
+                        <div class="form-group">
+                            <label for="correo">*Correo electrónico</label>
+                            <input type="email"
+                                   id="correo"
+                                   name="correo"
+                                   placeholder="menganitounsaac@gmail.com"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contrasena">*Contraseña</label>
+                            <div class="password-wrapper">
+                                <input type="password"
+                                       id="contrasena"
+                                       name="contrasena"
+                                       placeholder="••••••••••••"
+                                       required>
+                                <button type="button"
+                                        class="toggle-password"
+                                        id="toggle-password"
+                                        aria-label="Mostrar u ocultar contraseña">
+                                    👁
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <a href="/forgot-password" class="forgot-link">¿Olvidó la contraseña?</a>
+                        </div>
+
+                        <p id="error-message" class="error" style="display:none;"></p>
+
+                        <button type="submit" class="btn-primary">Ingresar</button>
+                    </form>
+                </div>
             </div>
-
-            <form id="login-form" class="login-form">
-                <div class="form-group">
-                    <label for="correo">Correo electrónico</label>
-                    <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="contrasena">Contraseña</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required>
-                        <button type="button" class="toggle-password" id="toggle-password">
-                            👁
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-footer">
-                    <a href="/forgot-password" class="forgot-link">¿Olvidó la contraseña?</a>
-                </div>
-
-                <p id="error-message" class="error" style="display:none;"></p>
-
-                <button type="submit" class="btn-primary">Ingresar</button>
-            </form>
         </div>
     </div>
 
