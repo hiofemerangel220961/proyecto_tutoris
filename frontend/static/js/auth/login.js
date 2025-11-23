@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
         errorMessage.textContent = "";
 
         try {
-            const response = await fetch("/auth/login", {
+            // CAMBIO AQUÍ: La ruta ahora es /login (sin /auth)
+            const response = await fetch("/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -36,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Redirección según el rol
             if (rol === "ADMINISTRADOR") {
-                window.location.href = "/admin/dashboard";   // luego crearemos estas vistas
+                window.location.href = "/admin/dashboard";
             } else if (rol === "TUTOR") {
                 window.location.href = "/tutor/dashboard";
             } else if (rol === "VERIFICADOR") {
@@ -52,9 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
             errorMessage.style.display = "block";
         }
     });
-});
 
-document.addEventListener("DOMContentLoaded", () => {
+    // Lógica para el botón de "ver contraseña" (el ojito)
     const toggle = document.getElementById("toggle-password");
     const passwordInput = document.getElementById("contrasena");
 

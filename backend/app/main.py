@@ -1,109 +1,100 @@
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 
 from .db.database import Base, engine, SessionLocal
 from .models import rol, usuario
 from .models.rol import Rol
 from .models.usuario import Usuario
 from .core.security import hash_password
-from .api import auth as auth_router
 
-# BASE_DIR = carpeta raíz del proyecto (proyecto_tutorias)
+# Importamos los routers
+from .api.auth import routes as auth_router  # <-- NUEVA RUTA
+from .api.admin import routes as admin_router
+from .api.tutor import routes as tutor_router
+from .api.verificador import routes as verificador_router
+
+# Configuración de directorios
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
 STATIC_DIR = FRONTEND_DIR / "static"
-TEMPLATES_DIR = FRONTEND_DIR / "templates"
 
-# Crear todas las tablas en la BD
+# Crear tablas en BD (si no existen)
 Base.metadata.create_all(bind=engine)
 
-
 def init_data():
-    """Crea roles básicos y un admin por defecto, si no existen."""
+    """
+    Función que se ejecuta al iniciar la app.
+    Crea los roles básicos y el usuario ADMINISTRADOR por defecto.
+    """
     db = SessionLocal()
     try:
-        # Crear roles si no existen
+        # 1. Crear Roles si no existen
         roles_base = ["ADMINISTRADOR", "TUTOR", "VERIFICADOR"]
         for nombre in roles_base:
             existe = db.query(Rol).filter(Rol.nombre_rol == nombre).first()
             if not existe:
-                nuevo_rol = Rol(nombre_rol=nombre, descripcion=f"Rol {nombre.lower()}")
-                db.add(nuevo_rol)
+                db.add(Rol(nombre_rol=nombre, descripcion=f"Rol {nombre.lower()}"))
         db.commit()
 
-        # Crear admin por defecto
+        # 2. Crear usuario ADMIN por defecto
         admin_email = "admin@tutorias.com"
         admin = db.query(Usuario).filter(Usuario.correo == admin_email).first()
+        
         if not admin:
+            # Buscamos el ID del rol de administrador
             rol_admin = db.query(Rol).filter(Rol.nombre_rol == "ADMINISTRADOR").first()
-            admin = Usuario(
+            
+            nuevo_admin = Usuario(
                 nombres="Admin",
-                apellidos="Principal",
+                apellidos="Sistema",
                 correo=admin_email,
-                telefono=0,
+                telefono="999999999",
+                # Aquí se encripta la contraseña 'admin123'
                 contrasena_hash=hash_password("admin123"),
                 id_rol=rol_admin.id_rol,
                 estado="ACTIVO",
                 foto_perfil_url=None,
             )
-            db.add(admin)
+            db.add(nuevo_admin)
             db.commit()
+            print(f"✅ Usuario Admin creado: {admin_email} | Pass: admin123")
+        else:
+            print("ℹ️ El usuario Admin ya existe.")
+            
+    except Exception as e:
+        print(f"❌ Error inicializando datos: {e}")
+        db.rollback()
     finally:
         db.close()
 
-
-# Inicializar datos al arrancar la app
+# Ejecutar inicialización de datos
 init_data()
 
-# 👇 SOLO UNA VEZ
 app = FastAPI(title="Sistema de Tutorías")
 
-# Montar estáticos y templates usando rutas absolutas
+# Montar archivos estáticos
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
-# Registrar router API (auth)
-app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+# --- REGISTRO DE RUTAS ---
+
+# 1. Rutas de Autenticación (Login, Register, etc.)
+app.include_router(auth_router.router, tags=["auth"])
+
+# 2. Rutas de Admin
+app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
+
+# 3. Rutas de Tutor
+app.include_router(tutor_router.router, prefix="/tutor", tags=["tutor"])
+
+# 4. Rutas de Verificador
+app.include_router(verificador_router.router, prefix="/verificador", tags=["verificador"])
 
 
 @app.get("/")
 def root():
-    return {"message": "API del Sistema de Tutorías funcionando"}
-
+    return {"message": "API del Sistema de Tutorías funcionando. Ve a /login para entrar."}
 
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
-
-
-@app.get("/login")
-def login_page(request: Request):
-    return templates.TemplateResponse("auth/login.html", {"request": request})
-
-@app.get("/register")
-def register_page(request: Request):
-    return templates.TemplateResponse("auth/register.html", {"request": request})
-@app.get("/forgot-password")
-def forgot_password_page(request: Request):
-    return templates.TemplateResponse("auth/forgot_password.html", {"request": request})
-
-
-@app.get("/reset-password")
-def reset_password_page(request: Request):
-    return templates.TemplateResponse("auth/reset_password.html", {"request": request})
-
-@app.get("/admin/dashboard")
-def admin_dashboard(request: Request):
-    return templates.TemplateResponse("admin/dashboard.html", {"request": request})
-
-
-@app.get("/tutor/dashboard")
-def tutor_dashboard(request: Request):
-    return templates.TemplateResponse("tutor/dashboard.html", {"request": request})
-
-
-@app.get("/verificador/dashboard")
-def verificador_dashboard(request: Request):
-    return templates.TemplateResponse("verificador/dashboard.html", {"request": request})

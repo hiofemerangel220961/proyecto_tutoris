@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch("/auth/register", {
+            // CAMBIO AQUÍ: La ruta ahora es /register (sin /auth)
+            const response = await fetch("/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

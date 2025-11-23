@@ -9,8 +9,8 @@ class Carrera(Base):
     nombre = Column("nombre_carrera", String, nullable=False)
     codigo = Column("codigo_carrera", String, nullable=False)
     facultad = Column(String, nullable=True)
-    activo = Column("estado", Boolean, default=True) # Mapeamos 'estado' del DBML a booleano para facilitar lógica
+    activo = Column("estado", Boolean, default=True) 
 
-    # Relaciones (se llenarán automáticamente cuando definamos los otros modelos)
+    # Relaciones
     estudiantes = relationship("Estudiante", back_populates="carrera")
     tutores = relationship("Tutor", back_populates="carrera")
