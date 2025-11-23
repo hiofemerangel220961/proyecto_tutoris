@@ -81,3 +81,29 @@ def health_check():
 @app.get("/login")
 def login_page(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
+
+@app.get("/register")
+def register_page(request: Request):
+    return templates.TemplateResponse("auth/register.html", {"request": request})
+@app.get("/forgot-password")
+def forgot_password_page(request: Request):
+    return templates.TemplateResponse("auth/forgot_password.html", {"request": request})
+
+
+@app.get("/reset-password")
+def reset_password_page(request: Request):
+    return templates.TemplateResponse("auth/reset_password.html", {"request": request})
+
+@app.get("/admin/dashboard")
+def admin_dashboard(request: Request):
+    return templates.TemplateResponse("admin/dashboard.html", {"request": request})
+
+
+@app.get("/tutor/dashboard")
+def tutor_dashboard(request: Request):
+    return templates.TemplateResponse("tutor/dashboard.html", {"request": request})
+
+
+@app.get("/verificador/dashboard")
+def verificador_dashboard(request: Request):
+    return templates.TemplateResponse("verificador/dashboard.html", {"request": request})

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear cuenta - Sistema de Tutorías</title>
+    <link rel="stylesheet" href="/static/css/auth/login.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="login-card">
+            <div class="login-logo">
+                <span class="logo-placeholder">ST</span>
+            </div>
+
+            <div class="login-header">
+                <h1>Crear cuenta</h1>
+                <p>
+                    ¿Ya tienes cuenta?
+                    <a href="/login">Iniciar sesión</a>
+                </p>
+            </div>
+
+            <form id="register-form" class="login-form">
+                <div class="form-group">
+                    <label for="nombres">Nombres</label>
+                    <input type="text" id="nombres" name="nombres" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellidos">Apellidos</label>
+                    <input type="text" id="apellidos" name="apellidos" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="correo">Correo electrónico</label>
+                    <input type="email" id="correo" name="correo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rol_solicitado">Rol solicitado</label>
+                    <select id="rol_solicitado" name="rol_solicitado" required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="ADMINISTRADOR">Administrador</option>
+                        <option value="TUTOR">Tutor</option>
+                        <option value="VERIFICADOR">Verificador</option>
+                    </select>
+                </div>
+
+                <p id="register-error" class="error" style="display:none;"></p>
+                <p id="register-success" style="display:none; font-size:0.9rem; color:#16a34a;"></p>
+
+                <button type="submit" class="btn-primary">Enviar solicitud</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/auth/register.js"></script>
+</body>
+</html>
