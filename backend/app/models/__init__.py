@@ -1,3 +1,11 @@
-from .rol import Rol   # noqa: F401
-from .usuario import Usuario  # noqa: F401
-from .solicitud_cuenta import SolicitudCuenta  # noqa: F401
+from .rol import Rol
+from .usuario import Usuario
+from .solicitud_cuenta import SolicitudCuenta
+from .recuperacion_password import RecuperacionPassword
+from .carrera import Carrera
+from .semestre import Semestre
+from .ambiente import Ambiente
+from .estudiante import Estudiante
+from .tutor import Tutor
+from .clase_tutoria import ClaseTutoria
+from .asignacion_tutorado import AsignacionTutorado
