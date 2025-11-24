@@ -15,3 +15,5 @@ backend/app/db/tutorias.db
 
 # Otros
 *.log
+
+.DS_Store

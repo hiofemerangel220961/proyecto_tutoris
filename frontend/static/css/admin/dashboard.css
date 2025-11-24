@@ -214,7 +214,7 @@ body {
 /* Efecto al pasar el mouse */
 .user-name-top:hover {
     color: var(--primary-blue); /* Cambia al azul del tema */
-
+    text-decoration: underline; /* Opcional: agrega subrayado sutil si quieres */
 }
 
 .user-role-top {
