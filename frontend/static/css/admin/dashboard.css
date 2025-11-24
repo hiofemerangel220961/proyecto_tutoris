@@ -1,0 +1,459 @@
+/* Importar Nunito Sans desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;400;600;700;800&display=swap');
+
+:root {
+    --primary-blue: #2E25AC;
+    --accent-blue: #4E44DC;
+    --light-blue-bg: #E1E7FF;
+    
+    --white: #FFFFFF;
+    --text-dark: #1F2937;
+    --text-muted: #6B7280; /* Gris para los headers */
+    --danger: #EF4444;     /* Rojo para notificaciones */
+    
+    --radius-xl: 20px;
+    --radius-l: 12px;
+    --radius-m: 8px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+body {
+    background-color: var(--white);
+    height: 100vh;
+    overflow: hidden;
+    font-size: 15px; 
+}
+
+.layout-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* =========================================
+   SIDEBAR (Barra Azul Izquierda)
+   ========================================= */
+.sidebar {
+    width: 260px;
+    background-color: var(--primary-blue);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    padding: 25px 18px;
+    flex-shrink: 0;
+    justify-content: space-between;
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 35px;
+    padding-left: 8px;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    align-self: center;
+    filter: brightness(0) invert(1); 
+}
+
+.brand-text {
+    font-size: 0.7rem;
+    font-weight: 300;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+    align-self: center;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--white);
+    border-radius: var(--radius-l);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.nav-item a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estado ACTIVO (Botón azul brillante) */
+.nav-item.active a {
+    background-color: var(--accent-blue);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent-blue);
+    color: var(--white);
+    border-radius: var(--radius-l);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    background-color: #3d34b5;
+}
+
+/* =========================================
+   MAIN CONTENT
+   ========================================= */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white);
+    padding: 20px 50px 30px 50px;
+    overflow-y: auto;
+}
+
+/* --- Header Superior --- */
+.top-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 10px;
+}
+
+.user-profile-section {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Separación entre campana y usuario */
+}
+
+/* --- Notificaciones (Campana) Mejorada --- */
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.notification-bell:hover {
+    background-color: #F3F4F6; /* Gris muy suave al hover */
+}
+
+/* Estilo para el SVG dentro de la campana */
+.notification-bell svg path {
+    stroke: var(--text-muted);
+    transition: stroke 0.2s;
+}
+
+.notification-bell:hover svg path {
+    stroke: var(--primary-blue); /* Se pone azul al hover */
+}
+
+/* Punto rojo */
+.badge-dot {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 9px;
+    height: 9px;
+    background-color: var(--danger);
+    border-radius: 50%;
+    border: 1.5px solid var(--white);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* --- Info Usuario --- */
+.user-info-text {
+    text-align: right;
+}
+
+.user-name-top {
+    display: block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    
+    /* Propiedades de enlace */
+    text-decoration: none; /* Quita el subrayado típico de los links */
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+/* Efecto al pasar el mouse */
+.user-name-top:hover {
+    color: var(--primary-blue); /* Cambia al azul del tema */
+
+}
+
+.user-role-top {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.avatar-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: var(--white);
+    border: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: var(--primary-blue);
+    font-weight: 800;
+}
+
+/* --- Área de Bienvenida --- */
+.welcome-area {
+    margin-bottom: 25px;
+}
+
+.welcome-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+}
+
+.welcome-text span {
+    color: var(--primary-blue);
+}
+
+/* =========================================
+   DASHBOARD CARD & FILTERS
+   ========================================= */
+.dashboard-card {
+    background-color: var(--light-blue-bg);
+    border-radius: 8px;
+    padding: 35px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+}
+
+.card-header-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #2c2c2c;
+}
+
+/* --- Inputs y Filtros --- */
+.filters-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.search-wrapper {
+    flex: 1; 
+    min-width: 0;
+    position: relative;
+}
+
+.filter-wrapper {
+    width: 300px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.search-input, 
+.filter-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 40px 0 20px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    outline: none;
+    font-size: 0.9rem;
+    background-color: var(--white);
+    color: var(--text-dark);
+    font-weight: 400;
+    box-shadow: 0 2px 4px rgba(55, 55, 55, 0.02);
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus, 
+.filter-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(46, 37, 172, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9CA3AF;
+    font-weight: 400;
+}
+
+.search-icon-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6B7280;
+    cursor: pointer;
+    display: flex;
+    padding: 0;
+}
+
+.filter-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 35px;
+    cursor: pointer;
+}
+
+/* =========================================
+   LISTA DE CLASES (TABLA)
+   ========================================= */
+.list-headers {
+    display: grid;
+    grid-template-columns: 2.5fr 3fr 0.8fr 0.8fr;
+    padding: 0 25px;
+    margin-bottom: 12px;
+}
+
+.list-headers div, 
+.list-headers .col-center {
+    color: var(--text-muted) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+
+.list-headers .col-center {
+    text-align: center;
+}
+.list-headers div:last-child {
+    text-align: center;
+}
+
+.classes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacio entre filas */
+}
+
+.class-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s;
+}
+
+/* --- FILA DE DATOS COMPACTA --- */
+.class-row {
+    display: grid;
+    grid-template-columns: 2.5fr 3fr 0.8fr 0.8fr;
+    align-items: center;
+    background-color: var(--white);
+    
+    /* Ajuste para hacer las filas menos anchas (más delgadas verticalmente) */
+    padding: 10px 25px; 
+    min-height: 60px; /* Altura mínima reducida */
+    
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.class-item-link:hover .class-row {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(46, 37, 172, 0.08);
+    border: 1px solid var(--accent-blue);
+}
+
+/* Columnas internas */
+.col-tutor {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.tutor-img {
+    width: 40px; /* Ligeramente más pequeño para la fila compacta */
+    height: 40px;
+    border-radius: 50%;
+    background-color: #9CA3AF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.tutor-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tutor-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.col-school {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+}
+
+.col-center {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+/* Helpers */
+.icon {
+    width: 20px;
+    height: 20px;
+}

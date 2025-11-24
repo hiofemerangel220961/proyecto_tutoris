@@ -45,21 +45,24 @@ def init_data():
             # Buscamos el ID del rol de administrador
             rol_admin = db.query(Rol).filter(Rol.nombre_rol == "ADMINISTRADOR").first()
             
+            # CAMBIOS AQUÍ 👇
             nuevo_admin = Usuario(
-                nombres="Admin",
-                apellidos="Sistema",
+                nombres="Tulio",           # Antes: Admin
+                apellidos="Tribiño",       # Antes: Principal
                 correo=admin_email,
                 telefono="999999999",
-                # Aquí se encripta la contraseña 'admin123'
                 contrasena_hash=hash_password("admin123"),
                 id_rol=rol_admin.id_rol,
                 estado="ACTIVO",
-                foto_perfil_url=None,
+                foto_perfil_url=None,      # Por defecto sin foto
             )
             db.add(nuevo_admin)
             db.commit()
-            print(f"✅ Usuario Admin creado: {admin_email} | Pass: admin123")
+            print(f"✅ Usuario Admin creado: {admin_email} (Tulio Tribiño)")
         else:
+            # Opcional: Si ya existe, podrías querer actualizarle el nombre si es el viejo
+            # pero lo más rápido es borrar el archivo tutorias.db para que se regenere,
+            # o simplemente dejarlo así.
             print("ℹ️ El usuario Admin ya existe.")
             
     except Exception as e:
