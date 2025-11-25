@@ -9,3 +9,4 @@ from .estudiante import Estudiante
 from .tutor import Tutor
 from .clase_tutoria import ClaseTutoria
 from .asignacion_tutorado import AsignacionTutorado
+from .sesion import Sesion

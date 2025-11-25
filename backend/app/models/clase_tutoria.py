@@ -23,3 +23,6 @@ class ClaseTutoria(Base):
     
     # Lista de asignaciones (estudiantes en esta clase)
     asignaciones = relationship("AsignacionTutorado", back_populates="clase")
+    
+    # Lista de sesiones programadas
+    sesiones = relationship("Sesion", back_populates="clase")

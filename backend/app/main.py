@@ -9,8 +9,9 @@ from .models.usuario import Usuario
 from .core.security import hash_password
 
 # Importamos los routers
-from .api.auth import routes as auth_router  # <-- NUEVA RUTA
+from .api.auth import routes as auth_router
 from .api.admin import routes as admin_router
+from .api.admin import clases as admin_clases_router # <-- NUEVA RUTA
 from .api.tutor import routes as tutor_router
 from .api.verificador import routes as verificador_router
 
@@ -86,6 +87,7 @@ app.include_router(auth_router.router, tags=["auth"])
 
 # 2. Rutas de Admin
 app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
+app.include_router(admin_clases_router.router, prefix="/admin", tags=["admin-clases"])
 
 # 3. Rutas de Tutor
 app.include_router(tutor_router.router, prefix="/tutor", tags=["tutor"])

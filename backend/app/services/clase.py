@@ -6,6 +6,7 @@ from ..models.clase_tutoria import ClaseTutoria
 from ..models.tutor import Tutor
 from ..models.usuario import Usuario
 from ..models.semestre import Semestre
+from ..models.asignacion_tutorado import AsignacionTutorado
 
 class ClaseService:
 
@@ -47,3 +48,16 @@ class ClaseService:
             query = query.filter(ClaseTutoria.id_carrera == carrera_id)
 
         return query.all()
+
+    @staticmethod
+    def get_clase_detalle(db: Session, clase_id: int) -> Optional[ClaseTutoria]:
+        """
+        Obtiene el detalle de una clase específica, incluyendo sesiones y estudiantes.
+        """
+        return db.query(ClaseTutoria).options(
+            joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
+            joinedload(ClaseTutoria.carrera),
+            joinedload(ClaseTutoria.ambiente),
+            joinedload(ClaseTutoria.sesiones),
+            joinedload(ClaseTutoria.asignaciones).joinedload(AsignacionTutorado.estudiante)
+        ).filter(ClaseTutoria.id == clase_id).first()
