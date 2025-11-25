@@ -15,6 +15,8 @@ from backend.app.models.clase_tutoria import ClaseTutoria
 from backend.app.models.ambiente import Ambiente
 from backend.app.models.estudiante import Estudiante
 from backend.app.models.asignacion_tutorado import AsignacionTutorado
+from backend.app.models.sesion import Sesion
+from datetime import timedelta
 from backend.app.core.security import hash_password
 
 # Crear tablas si no existen
@@ -43,12 +45,12 @@ db.refresh(c2)
 sem = db.query(Semestre).filter_by(codigo="2025-II").first()
 if not sem:
     sem = Semestre(
-        codigo="2025-II", 
-        anio=2025, 
-        periodo="II", 
-        fecha_inicio=date(2025, 8, 1), 
-        fecha_fin=date(2025, 12, 20), 
-        activo=True, 
+        codigo="2025-II",
+        anio=2025,
+        periodo="II",
+        fecha_inicio=date(2025, 8, 1),
+        fecha_fin=date(2025, 12, 20),
+        activo=True,
         estado_actual="ACTIVO"
     )
     db.add(sem)
@@ -74,61 +76,70 @@ db.commit()
 rol_tutor = db.query(Rol).filter_by(nombre_rol="TUTOR").first()
 
 # 5. Tutores y Clases
+#    👉 Ahora definimos 10 tutores
 tutores_data = [
     ("Juan Carlos", "Bodoque"),
-    ("Tulio", "Tribiño"),
-    ("Juanin", "Juan Harry")
+    ("Tulio", "Triviño"),
+    ("Juanín", "Juan Harry"),
+    ("Patricio", "Estrella"),
+    ("Bob", "Esponja"),
+    ("Lisa", "Simpson"),
+    ("Homero", "Simpson"),
+    ("María", "Pérez"),
+    ("Carlos", "Ramírez"),
+    ("Ana", "Sánchez"),
 ]
 
-for nombre, apellido in tutores_data:
+for idx, (nombre, apellido) in enumerate(tutores_data, start=1):
     email_limpio = f"{nombre.lower().replace(' ', '')}@unsaac.edu.pe"
-    
+
     # Usuario
     usuario = db.query(Usuario).filter(Usuario.correo == email_limpio).first()
     if not usuario:
         usuario = Usuario(
-            nombres=nombre, 
-            apellidos=apellido, 
-            correo=email_limpio, 
+            nombres=nombre,
+            apellidos=apellido,
+            correo=email_limpio,
             telefono="987654321",
-            contrasena_hash=hash_password("123"), # Contraseña genérica
-            id_rol=rol_tutor.id_rol, 
+            contrasena_hash=hash_password("123"),  # Contraseña genérica
+            id_rol=rol_tutor.id_rol,
             estado="ACTIVO"
         )
         db.add(usuario)
         db.commit()
         print(f"👤 Usuario creado: {nombre} ({email_limpio})")
-    
-    # Recargar usuario
+
     db.refresh(usuario)
+
+    # Asignamos carrera de forma clara:
+    # - Primeros 5 tutores → IIS
+    # - Siguientes 5 tutores → IC
+    carrera_asignada = c1 if idx <= 5 else c2
 
     # Tutor
     tutor = db.query(Tutor).filter(Tutor.id_usuario == usuario.id_usuario).first()
-    
-    # CORRECCIÓN AQUÍ: Usamos .id en lugar de .id_carrera para el objeto Python
-    carrera_asignada = c1 if "Juan" in nombre else c2
-    
     if not tutor:
         tutor = Tutor(
-            id_usuario=usuario.id_usuario, 
-            id_carrera=carrera_asignada.id,  # <--- CORREGIDO (antes .id_carrera)
-            codigo_docente=f"DOC-{usuario.id_usuario}"
+            id_usuario=usuario.id_usuario,
+            id_carrera=carrera_asignada.id,   # usamos .id del objeto Carrera
+            codigo_docente=f"DOC-{usuario.id_usuario}",
+            activo=True
         )
         db.add(tutor)
         db.commit()
-    
+
     db.refresh(tutor)
 
-    # Clase
+    # Clase de tutoría (1 clase por tutor)
     nombre_clase = f"Tutoría {nombre}"
     clase = db.query(ClaseTutoria).filter_by(nombre=nombre_clase).first()
     if not clase:
         clase = ClaseTutoria(
-            nombre=nombre_clase, 
-            id_tutor=tutor.id,          # <--- CORREGIDO (antes .id_tutor)
-            id_carrera=carrera_asignada.id, # <--- CORREGIDO
-            id_semestre=sem.id,         # <--- CORREGIDO (antes .id_semestre)
-            id_ambiente=amb.id,         # <--- CORREGIDO (antes .id_ambiente)
+            nombre=nombre_clase,
+            id_tutor=tutor.id,               # id interno del Tutor
+            id_carrera=carrera_asignada.id,
+            id_semestre=sem.id,
+            id_ambiente=amb.id,
             activo=True
         )
         db.add(clase)
@@ -137,12 +148,29 @@ for nombre, apellido in tutores_data:
 
     db.refresh(clase)
 
-    # 6. Estudiantes y Asignación (Agregar 2 alumnos por clase)
-    for i in range(1, 3):
-        # Generamos un código único para no chocar
+    # 5.1 Sesiones (👉 2 sesiones por clase)
+    sesiones_existentes = db.query(Sesion).filter_by(id_clase=clase.id).count()
+    if sesiones_existentes < 2:
+        fecha_base = datetime.now()
+        for i in range(1, 3):
+            nueva_fecha = fecha_base + timedelta(days=i*7) # Una cada semana
+            sesion = Sesion(
+                id_clase=clase.id,
+                id_ambiente=amb.id,
+                fecha=nueva_fecha,
+                tema=f"Sesión {i}: Seguimiento Académico",
+                estado="PROGRAMADA"
+            )
+            db.add(sesion)
+            print(f"      📅 Sesión programada: {sesion.tema} para {nueva_fecha.date()}")
+        db.commit()
+
+    # 6. Estudiantes y Asignación (👉 2 alumnos por clase)
+    for i in range(1, 3):  # 1 y 2 → total 2 estudiantes
+        # Código único por estudiante
         codigo_est = f"{carrera_asignada.codigo}25{tutor.id}{i}"
         est = db.query(Estudiante).filter_by(codigo=codigo_est).first()
-        
+
         if not est:
             est = Estudiante(
                 codigo=codigo_est,
@@ -150,25 +178,30 @@ for nombre, apellido in tutores_data:
                 nombres=f"Alumno{i}",
                 apellidos=f"De {nombre}",
                 correo=f"alumno{i}.{nombre.lower().replace(' ', '')}@est.unsaac.edu.pe",
-                id_carrera=carrera_asignada.id, # <--- CORREGIDO
+                id_carrera=carrera_asignada.id,
                 estado_academico="REGULAR"
             )
             db.add(est)
             db.commit()
-        
+
         db.refresh(est)
-        
+
         # Asignar a la clase
-        asignacion = db.query(AsignacionTutorado).filter_by(id_clase=clase.id, id_estudiante=est.id).first()
+        asignacion = db.query(AsignacionTutorado).filter_by(
+            id_clase=clase.id,
+            id_estudiante=est.id
+        ).first()
+
         if not asignacion:
             asignacion = AsignacionTutorado(
-                id_clase=clase.id,          # <--- CORREGIDO
-                id_estudiante=est.id,       # <--- CORREGIDO (antes .id_estudiante)
-                estado="VIGENTE"
+                id_clase=clase.id,
+                id_estudiante=est.id,
+                estado="VIGENTE",
+                fecha_asignacion=datetime.utcnow()
             )
             db.add(asignacion)
             db.commit()
-            print(f"      🎓 Alumno asignado: {est.nombres} {est.apellidos}")
+            print(f"      🎓 Alumno asignado: {est.nombres} {est.apellidos} a {nombre_clase}")
 
 print("✅ Datos verificados y creados exitosamente.")
 db.close()
