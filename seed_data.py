@@ -23,7 +23,7 @@ from backend.app.core.security import hash_password
 Base.metadata.create_all(bind=engine)
 db = SessionLocal()
 
-print("🌱 Iniciando carga de datos...")
+print("Iniciando carga de datos...")
 
 # 1. Carreras
 c1 = db.query(Carrera).filter_by(codigo="IIS").first()
@@ -107,7 +107,7 @@ for idx, (nombre, apellido) in enumerate(tutores_data, start=1):
         )
         db.add(usuario)
         db.commit()
-        print(f"👤 Usuario creado: {nombre} ({email_limpio})")
+        print(f"Usuario creado: {nombre} ({email_limpio})")
 
     db.refresh(usuario)
 
@@ -144,14 +144,16 @@ for idx, (nombre, apellido) in enumerate(tutores_data, start=1):
         )
         db.add(clase)
         db.commit()
-        print(f"   📚 Clase creada: {nombre_clase}")
+        print(f"   Clase creada: {nombre_clase}")
 
     db.refresh(clase)
 
     # 5.1 Sesiones (👉 2 sesiones por clase)
     sesiones_existentes = db.query(Sesion).filter_by(id_clase=clase.id).count()
-    if sesiones_existentes < 2:
+    if sesiones_existentes < 5: # Aumentamos a 5 para tener historial
         fecha_base = datetime.now()
+        
+        # 2 sesiones futuras (PROGRAMADAS)
         for i in range(1, 3):
             nueva_fecha = fecha_base + timedelta(days=i*7) # Una cada semana
             sesion = Sesion(
@@ -159,10 +161,24 @@ for idx, (nombre, apellido) in enumerate(tutores_data, start=1):
                 id_ambiente=amb.id,
                 fecha=nueva_fecha,
                 tema=f"Sesión {i}: Seguimiento Académico",
-                estado="PROGRAMADA"
+                estado="PROGRAMADA" # ESTADO PENDIENTE
             )
             db.add(sesion)
-            print(f"      📅 Sesión programada: {sesion.tema} para {nueva_fecha.date()}")
+            print(f"      Sesión programada: {sesion.tema} para {nueva_fecha.date()}")
+            
+        # 3 sesiones pasadas (HISTORIAL - REALIZADAS)
+        for i in range(1, 4):
+            fecha_pasada = fecha_base - timedelta(days=i*7) # Semanas atrás
+            sesion_pasada = Sesion(
+                id_clase=clase.id,
+                id_ambiente=amb.id,
+                fecha=fecha_pasada,
+                tema=f"Sesión Pasada {i}: Introducción y Diagnóstico",
+                estado="REALIZADA" # ESTADO HECHO
+            )
+            db.add(sesion_pasada)
+            print(f"      Sesión historial: {sesion_pasada.tema} para {fecha_pasada.date()}")
+            
         db.commit()
 
     # 6. Estudiantes y Asignación (👉 2 alumnos por clase)
@@ -201,7 +217,7 @@ for idx, (nombre, apellido) in enumerate(tutores_data, start=1):
             )
             db.add(asignacion)
             db.commit()
-            print(f"      🎓 Alumno asignado: {est.nombres} {est.apellidos} a {nombre_clase}")
+            print(f"      Alumno asignado: {est.nombres} {est.apellidos} a {nombre_clase}")
 
-print("✅ Datos verificados y creados exitosamente.")
+print("Datos verificados y creados exitosamente.")
 db.close()

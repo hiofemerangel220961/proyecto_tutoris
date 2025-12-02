@@ -4,184 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle Clase - Tutoris</title>
-    <!-- Reutilizamos el CSS del dashboard y añadimos estilos específicos si es necesario -->
+    <title>Historial de Tutorías - Tutoris</title>
+    <!-- Reutilizamos el CSS del dashboard -->
     <link rel="stylesheet" href="/static/css/admin/dashboard.css">
     <style>
-        /* Estilos específicos para la vista de detalle */
-        .detail-container {
+        .history-container {
             padding: 20px;
         }
 
-        .class-header {
-            background-color: #E8F0FE;
-            /* Azul muy claro */
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tutor-info {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .tutor-avatar-large {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .tutor-avatar-large img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .tutor-details h3 {
-            margin: 0 0 5px 0;
-            color: #1a1a1a;
-            font-size: 1.1rem;
-        }
-
-        .tutor-details p {
-            margin: 2px 0;
-            color: #444;
-            font-size: 0.95rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-action {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: opacity 0.2s;
-        }
-
-        .btn-action:hover {
-            opacity: 0.9;
-        }
-
-        .btn-download {
-            background-color: #5B5FC7;
-        }
-
-        .btn-edit {
-            background-color: #5B5FC7;
-        }
-
-        .btn-history {
-            background-color: #5B5FC7;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            color: #1a1a1a;
-            margin-bottom: 15px;
+        .page-title {
+            color: #1a237e;
+            /* Azul oscuro */
+            font-size: 1.5rem;
             font-weight: 700;
-        }
-
-        /* Carrusel de Tutorias Programadas */
-        .sessions-carousel {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding-bottom: 10px;
             margin-bottom: 30px;
+            text-decoration: none;
         }
 
-        .session-card {
-            background-color: #F3E5F5;
-            /* Lila claro */
-            border-radius: 10px;
-            padding: 15px;
-            min-width: 250px;
-            flex-shrink: 0;
-        }
-
-        .session-card p {
-            margin: 5px 0;
-            font-size: 0.9rem;
-            color: #333;
-        }
-
-        .session-card strong {
-            color: #000;
-        }
-
-        /* Tabla de Tutorados */
-        .tutees-table-container {
+        .history-table-container {
             background-color: #E8F0FE;
             border-radius: 12px;
             padding: 20px;
         }
 
-        .tutees-table {
+        .history-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            /* Espacio entre filas */
         }
 
-        .tutees-table th {
+        .history-table th {
             text-align: left;
-            padding: 10px;
+            padding: 10px 20px;
             color: #666;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 0.9rem;
-            border-bottom: 1px solid #ddd;
         }
 
-        .tutees-table td {
-            padding: 12px 10px;
-            background-color: #F8F9FA;
-            /* Blanco humo */
-            border-bottom: 5px solid #E8F0FE;
-            /* Espacio entre filas simulado */
+        .history-table tbody tr {
+            background-color: #F5F5F5;
+            /* Gris muy claro/Blanco humo */
+            border-radius: 50px;
+            /* Bordes muy redondos como en la imagen */
         }
 
-        /* Redondear bordes de filas */
-        .tutees-table tr td:first-child {
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
+        .history-table td {
+            padding: 15px 20px;
+            color: #333;
+            font-size: 0.95rem;
+            vertical-align: middle;
         }
 
-        .tutees-table tr td:last-child {
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
+        /* Redondear bordes de la fila completa */
+        .history-table td:first-child {
+            border-top-left-radius: 25px;
+            border-bottom-left-radius: 25px;
         }
 
-        .tutees-table tr:last-child td {
-            border-bottom: none;
+        .history-table td:last-child {
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 25px;
         }
 
-        .tutee-row {
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .tutee-row:hover td {
+        .history-table tr:hover td {
             background-color: #fff;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: default;
         }
     </style>
 </head>
@@ -198,7 +87,7 @@
             </div>
 
             <ul class="nav-menu">
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a href="/admin/dashboard">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -207,7 +96,6 @@
                         Inicio
                     </a>
                 </li>
-                <!-- Otros items del sidebar... se podrían incluir con include si usáramos partials, pero por ahora copio lo básico -->
                 <li class="nav-item"><a href="#"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -239,7 +127,7 @@
                             <path
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
                             </path>
-                        </svg> Configuración (Semestres)</a></li>
+                        </svg> Configuración</a></li>
             </ul>
 
             <div class="sidebar-footer">
@@ -293,82 +181,44 @@
                 </div>
             </header>
 
-            <div class="detail-container">
-                <h1 style="color: #311B92; margin-bottom: 20px;">{{ clase.nombre }}</h1>
-
-                <!-- Tarjeta de Información del Tutor -->
-                <div class="class-header">
-                    <div class="tutor-info">
-                        <div class="tutor-avatar-large">
-                            {% if clase.tutor.usuario.foto_perfil_url %}
-                            <img src="{{ clase.tutor.usuario.foto_perfil_url }}" alt="Tutor">
-                            {% else %}
-                            <svg style="width:40px;height:40px;color:#333;" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            {% endif %}
-                        </div>
-                        <div class="tutor-details">
-                            <h3>Tutor: {{ clase.tutor.usuario.nombres }} {{ clase.tutor.usuario.apellidos }}</h3>
-                            <p><strong>DNI:</strong> {{ clase.tutor.usuario.dni or 'No registrado' }}</p>
-                            <p><strong>Correo Electrónico:</strong> {{ clase.tutor.usuario.correo }}</p>
-                            <p><strong>Teléfono:</strong> {{ clase.tutor.usuario.telefono }}</p>
-                            <p><strong>Ambiente:</strong> {{ clase.ambiente.codigo if clase.ambiente else 'No asignado'
-                                }}</p>
-                        </div>
-                    </div>
-                    <div class="action-buttons">
-                        <a href="#" class="btn-action btn-download">Descargar Detalles</a>
-                        <a href="#" class="btn-action btn-edit">Editar Clase</a>
-                        <a href="/admin/clases/{{ clase.id }}/historial" class="btn-action btn-history">Ver
-                            historial</a>
-                    </div>
+            <div class="history-container">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
+                    <a href="/admin/clases/{{ clase.id }}"
+                        style="color: #1a237e; text-decoration: none; display: flex; align-items: center;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+                    <h1 class="page-title" style="margin-bottom: 0;">Historial de tutorias: {{ clase.nombre }}</h1>
                 </div>
 
-                <!-- Tutorias Programadas -->
-                <h2 class="section-title">Tutorias Programadas 2025-II</h2>
-                <div class="sessions-carousel">
-                    {% if sesiones %}
-                    {% for sesion in sesiones %}
-                    <div class="session-card">
-                        <p><strong>Resumen:</strong> {{ sesion.tema or 'Sin tema' }}</p>
-                        <p><strong>Ambiente:</strong> {{ sesion.ambiente.codigo if sesion.ambiente else
-                            (clase.ambiente.codigo if clase.ambiente else 'N/A') }}</p>
-                        <p><strong>{{ sesion.fecha.strftime('%d/%m/%Y') }}</strong></p>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="session-card" style="background-color: #f0f0f0;">
-                        <p>No hay tutorías programadas.</p>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <!-- Tutorados -->
-                <h2 class="section-title">Tutorados</h2>
-                <div class="tutees-table-container">
-                    <table class="tutees-table">
+                <div class="history-table-container">
+                    <table class="history-table">
                         <thead>
                             <tr>
-                                <th>Nombres y Apellidos</th>
-                                <th>Carrera</th>
-                                <th style="text-align: right;">Sesiones</th>
+                                <th>Fecha</th>
+                                <th>Resumen</th>
+                                <th>Tutor</th>
+                                <th>Semestre</th>
+                                <th>Ambiente</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% if clase.asignaciones %}
-                            {% for asignacion in clase.asignaciones %}
-                            <tr class="tutee-row" onclick="window.location.href='#'">
-                                <td>{{ asignacion.estudiante.nombres }} {{ asignacion.estudiante.apellidos }}</td>
-                                <td>{{ clase.carrera.nombre }}</td>
-                                <td style="text-align: right;">0</td> <!-- Placeholder para conteo de sesiones -->
+                            {% if sesiones %}
+                            {% for sesion in sesiones %}
+                            <tr>
+                                <td>{{ sesion.fecha.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ sesion.tema or 'Sin tema' }}</td>
+                                <td>{{ clase.tutor.usuario.nombres }} {{ clase.tutor.usuario.apellidos }}</td>
+                                <td>{{ clase.semestre.codigo if clase.semestre else 'N/A' }}</td>
+                                <td>{{ sesion.ambiente.codigo if sesion.ambiente else (clase.ambiente.codigo if
+                                    clase.ambiente else 'N/A') }}</td>
                             </tr>
                             {% endfor %}
                             {% else %}
                             <tr>
-                                <td colspan="3" style="text-align:center;">No hay estudiantes asignados.</td>
+                                <td colspan="5" style="text-align: center;">No hay tutorías realizadas.</td>
                             </tr>
                             {% endif %}
                         </tbody>

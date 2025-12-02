@@ -7,6 +7,7 @@ from ..models.tutor import Tutor
 from ..models.usuario import Usuario
 from ..models.semestre import Semestre
 from ..models.asignacion_tutorado import AsignacionTutorado
+from ..models.sesion import Sesion
 
 class ClaseService:
 
@@ -58,6 +59,7 @@ class ClaseService:
             joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
             joinedload(ClaseTutoria.carrera),
             joinedload(ClaseTutoria.ambiente),
-            joinedload(ClaseTutoria.sesiones),
+            joinedload(ClaseTutoria.semestre),
+            joinedload(ClaseTutoria.sesiones).joinedload(Sesion.ambiente),
             joinedload(ClaseTutoria.asignaciones).joinedload(AsignacionTutorado.estudiante)
         ).filter(ClaseTutoria.id == clase_id).first()
