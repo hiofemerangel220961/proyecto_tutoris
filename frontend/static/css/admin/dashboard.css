@@ -1,6 +1,14 @@
---radius-xl: 20px;
---radius-l: 12px;
---radius-m: 8px;
+:root {
+    --primary-blue: #2A3F96;
+    --accent-blue: #4F46E5;
+    --light-blue-bg: #F4F7FE;
+    --white: #ffffff;
+    --text-dark: #111827;
+    --text-muted: #6B7280;
+    --danger: #EF4444;
+    --radius-xl: 20px;
+    --radius-l: 12px;
+    --radius-m: 8px;
 }
 
 * {
@@ -24,7 +32,7 @@ body {
 }
 
 /* =========================================
-   SIDEBAR (Barra Azul Izquierda)
+   SIDEBAR
    ========================================= */
 .sidebar {
     width: 260px;
@@ -86,7 +94,6 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Estado ACTIVO (Botón azul brillante) */
 .nav-item.active a {
     background-color: var(--accent-blue);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -139,10 +146,8 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
-    /* Separación entre campana y usuario */
 }
 
-/* --- Notificaciones (Campana) Mejorada --- */
 .notification-bell {
     position: relative;
     cursor: pointer;
@@ -157,10 +162,8 @@ body {
 
 .notification-bell:hover {
     background-color: #F3F4F6;
-    /* Gris muy suave al hover */
 }
 
-/* Estilo para el SVG dentro de la campana */
 .notification-bell svg path {
     stroke: var(--text-muted);
     transition: stroke 0.2s;
@@ -168,10 +171,8 @@ body {
 
 .notification-bell:hover svg path {
     stroke: var(--primary-blue);
-    /* Se pone azul al hover */
 }
 
-/* Punto rojo */
 .badge-dot {
     position: absolute;
     top: 6px;
@@ -184,7 +185,6 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Info Usuario --- */
 .user-info-text {
     text-align: right;
 }
@@ -194,20 +194,14 @@ body {
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--text-dark);
-
-    /* Propiedades de enlace */
     text-decoration: none;
-    /* Quita el subrayado típico de los links */
     cursor: pointer;
     transition: color 0.2s ease;
 }
 
-/* Efecto al pasar el mouse */
 .user-name-top:hover {
     color: var(--primary-blue);
-    /* Cambia al azul del tema */
     text-decoration: underline;
-    /* Opcional: agrega subrayado sutil si quieres */
 }
 
 .user-role-top {
@@ -228,6 +222,12 @@ body {
     overflow: hidden;
     color: var(--primary-blue);
     font-weight: 800;
+}
+
+.avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* --- Área de Bienvenida --- */
@@ -265,7 +265,6 @@ body {
     color: #2c2c2c;
 }
 
-/* --- Inputs y Filtros --- */
 .filters-container {
     display: flex;
     flex-direction: row;
@@ -371,7 +370,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* Espacio entre filas */
 }
 
 .class-item-link {
@@ -381,18 +379,13 @@ body {
     transition: transform 0.2s;
 }
 
-/* --- FILA DE DATOS COMPACTA --- */
 .class-row {
     display: grid;
     grid-template-columns: 2.5fr 3fr 0.8fr 0.8fr;
     align-items: center;
     background-color: var(--white);
-
-    /* Ajuste para hacer las filas menos anchas (más delgadas verticalmente) */
     padding: 10px 25px;
     min-height: 60px;
-    /* Altura mínima reducida */
-
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     border: 1px solid transparent;
@@ -405,7 +398,6 @@ body {
     border: 1px solid var(--accent-blue);
 }
 
-/* Columnas internas */
 .col-tutor {
     display: flex;
     align-items: center;
@@ -414,7 +406,6 @@ body {
 
 .tutor-img {
     width: 40px;
-    /* Ligeramente más pequeño para la fila compacta */
     height: 40px;
     border-radius: 50%;
     background-color: #9CA3AF;
@@ -449,416 +440,170 @@ body {
     color: var(--text-dark);
 }
 
-/* Helpers */
 .icon {
     width: 20px;
     height: 20px;
 }
 
-/*Detalle tutoria pey*/
-/* ===========================
-   DETALLE TUTORÍA (ADMIN)
-   =========================== */
-
-.tutoria-page-wrapper {
-    padding: 32px 40px 40px;
-    max-width: 1050px;
-    margin: 0 auto;
-}
-
-.tutoria-title {
+/* =========================================
+   DETALLE CLASE
+   ========================================= */
+.tutoria-page-title {
     font-size: 26px;
     font-weight: 800;
-    color: #1f2937;
+    color: var(--primary-blue);
     margin-bottom: 20px;
 }
 
-/* Card azul de información general */
-
 .tutoria-info-card {
-    background-color: #e6ecff;
-    /* azul muy claro */
-    border-radius: 12px;
-    padding: 24px 28px;
+    background-color: #E8EFFF;
+    border-radius: 18px;
+    padding: 24px 32px;
     margin-bottom: 32px;
-    line-height: 1.5;
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
-.tutoria-info-card p {
-    margin: 2px 0;
-    font-size: 14px;
+.class-header-content {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.tutor-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutor-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tutor-details {
+    flex: 1;
+}
+
+.tutor-details h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.tutor-details p {
+    margin: 4px 0;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.tutor-details .label {
+    font-weight: 700;
     color: #111827;
 }
 
-.tutoria-info-card .label {
-    font-weight: 700;
+.action-buttons {
+    display: flex;
+    gap: 12px;
 }
 
-/* Sección de sesiones */
+.btn-action {
+    background: var(--accent-blue);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: opacity 0.2s;
+}
 
-.tutoria-sesiones {
-    margin-top: 8px;
+.btn-action:hover {
+    opacity: 0.9;
+}
+
+.tutoria-sesiones-card {
+    margin-bottom: 30px;
 }
 
 .sesiones-title {
     font-size: 18px;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-dark);
     margin-bottom: 16px;
 }
 
-/* Tabla de sesiones (parece tabla pero es div) */
-
-.sesiones-table {
-    background-color: #eef2ff;
-    border-radius: 14px;
-    padding: 16px 18px 20px;
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+.sessions-list-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
 }
 
-.sesiones-row {
-    display: grid;
-    grid-template-columns: 2fr 3fr 1fr 1.4fr;
-    align-items: center;
-    font-size: 13px;
-    padding: 10px 16px;
-    border-radius: 999px;
-}
-
-.sesiones-header {
-    font-weight: 600;
-    color: #4b5563;
-    background: transparent;
-    border-radius: 0;
-    padding-bottom: 6px;
-    margin-bottom: 6px;
-}
-
-.sesiones-row:not(.sesiones-header) {
-    background-color: #ffffff;
-    margin-top: 8px;
-}
-
-.sesiones-row:not(.sesiones-header):hover {
-    background-color: #f3f4ff;
-}
-
-.sesiones-row .col-center {
-    text-align: center;
-}
-
-.sesiones-empty {
-    text-align: center;
-    color: #6b7280;
-    font-size: 13px;
-    padding: 20px 0 8px;
-}
-
-/*agregado*/
-/* --- Ajustes globales para que el detalle se vea igual al diseño --- */
-
-main {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-.page-wrapper {
-    width: 100%;
-    padding: 2rem 4rem;
-    /* Aumenta el espacio horizontal */
-}
-
-.detalle-container {
-    width: 100%;
-}
-
-.detalle-card {
-    width: 100%;
-    background: #e8edff;
-    padding: 2rem;
-    border-radius: 12px;
-}
-
-/* Tabla más ancha */
-.table-wrapper {
-    width: 100%;
-    margin-top: 2rem;
-}
-
-.table-wrapper table {
-    width: 100%;
-    border-spacing: 0 12px;
-}
-
-.table-wrapper td,
-.table-wrapper th {
-    padding: 18px;
-}
-
-/*agregado2*/
-/* ============================
-   DETALLE TUTORÍA (ADMIN)
-   ============================ */
-
-.tutoria-page-wrapper {
-    padding: 32px 64px 64px;
-}
-
-/* Título "Detalle tutoría" más arriba y azul */
-.tutoria-page-title {
-    margin-top: 8px;
-    margin-bottom: 24px;
-    font-size: 32px;
-    font-weight: 700;
-    color: #1D35C4;
-    /* azul similar al figma */
-}
-
-/* Card grande azul claro */
-.tutoria-info-card {
+.session-card {
     background: #E8EFFF;
-    border-radius: 18px;
-    padding: 24px 32px;
-    max-width: 1050px;
-    margin-bottom: 36px;
-    line-height: 1.5;
-    font-size: 14px;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 300px;
+    flex-shrink: 0;
 }
 
-.tutoria-info-card p {
-    margin: 2px 0;
+.session-card p {
+    margin-bottom: 5px;
+    color: #333;
 }
 
-.tutoria-info-card .label {
-    font-weight: 600;
-}
-
-/* Bloque de sesiones como en el diseño */
-.tutoria-sesiones-card {
-    max-width: 1180px;
-}
-
-.sesiones-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 16px;
-}
-
-/* Caja azul que envuelve toda la tabla */
 .sesiones-card-table {
     background: #E8EFFF;
     border-radius: 18px;
     padding: 20px 24px;
 }
 
-/* Encabezado y filas usan el mismo grid */
 .sesiones-row {
     display: grid;
-    grid-template-columns: 2.4fr 2fr 0.7fr 1.1fr;
+    grid-template-columns: 2fr 2fr 1fr 1fr;
     align-items: center;
-    column-gap: 24px;
     font-size: 14px;
+    padding: 10px 16px;
 }
 
 .sesiones-header {
     font-weight: 600;
-    margin-bottom: 12px;
+    color: #4b5563;
+    margin-bottom: 6px;
 }
 
-/* Cada fila estilo "pastilla" */
 .sesiones-item {
     background: #F7F7FC;
     border-radius: 18px;
-    padding: 10px 18px;
     margin-bottom: 10px;
-    grid-template-columns: 2.4fr 2fr 0.7fr 1.1fr;
-    align-items: center;
-    column-gap: 24px;
-    font-size: 14px;
-}
-
-.sesiones-header {
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
-/* Cada fila estilo "pastilla" */
-.sesiones-item {
-    background: #F7F7FC;
-    border-radius: 18px;
-    padding: 10px 18px;
-    margin-bottom: 10px;
-}
-
-.sesiones-item:last-child {
-    margin-bottom: 0;
-}
-
-.col-center {
-    text-align: center;
-}
-
-.sesiones-empty {
-    text-align: center;
-    padding: 18px 0;
-    color: #7A7A7A;
-    font-size: 14px;
-}
-
-.col-center {
-    text-align: center;
-}
-
-.sesiones-empty {
-    text-align: center;
-    padding: 18px 0;
-    color: #7A7A7A;
-    font-size: 14px;
-}
-
-/* ESTILOS PARA DETALLE DE SESIÓN (sesion_detalle.html) */
-
-.sesion-general-card {
-    background-color: #E8EFFF;
-    border-radius: 18px;
-    padding: 24px 32px;
-    margin-bottom: 30px;
-}
-
-.card-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-}
-
-.card-title-lg {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0;
-}
-
-.btn-download-sesion {
-    background-color: #4F46E5;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: 600;
     cursor: pointer;
-    font-size: 0.9rem;
     transition: background-color 0.2s;
 }
 
-.btn-download-sesion:hover {
-    background-color: #4338ca;
-}
-
-.general-info-grid p {
-    margin-bottom: 8px;
-    color: #374151;
-    font-size: 0.95rem;
-}
-
-.people-cards-row {
+a.sesiones-item {
+    text-decoration: none;
+    color: inherit;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 30px;
 }
 
-.person-card {
-    background-color: #F3E8FF;
-    border-radius: 18px;
-    padding: 24px;
+.sesiones-item:hover {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.person-info p {
-    margin-bottom: 6px;
-    color: #374151;
-    font-size: 0.95rem;
-}
-
-/* TABS */
-.tabs-container {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.tab-btn {
-    background-color: #4F46E5;
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.tab-btn:hover {
-    opacity: 0.9;
-}
-
-.tab-btn.active {
-    opacity: 1;
-}
-
-.tab-content {
-    animation: fadeEffect 0.5s;
-}
-
-@keyframes fadeEffect {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.info-block {
-    background-color: #E8EFFF;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
-
-.info-block h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #111827;
-}
-
-.info-block p {
-    color: #4B5563;
-    line-height: 1.5;
-}
-
-.bottom-actions {
-    margin-top: 30px;
-}
-
-.btn-download-adjunto {
-    background-color: #4F46E5;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    max-width: 300px;
+.sesiones-empty {
     text-align: center;
-}
-
-.btn-download-adjunto:hover {
-    background-color: #4338ca;
+    color: #6b7280;
+    padding: 20px;
 }

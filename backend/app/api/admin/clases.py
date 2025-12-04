@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import datetime
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from ...db.deps import get_db
 from ...models.usuario import Usuario
@@ -16,6 +16,7 @@ from fastapi.responses import RedirectResponse
 from fastapi import HTTPException
 # OJO: el nombre del modelo cámbialo por el TUYO
 from ...models.sesion import Sesion
+from ...models.asignacion_tutorado import AsignacionTutorado
 #-----------------
 
 router = APIRouter()
@@ -94,9 +95,15 @@ def ver_detalle_tutoria(
         Usuario.correo == "admin@tutorias.com"
     ).first()
 
-    # 2. Buscar la sesión por id
+    # 2. Buscar la sesión por id con relaciones
     sesion = (
         db.query(Sesion)
+        .options(
+            joinedload(Sesion.clase).joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
+            joinedload(Sesion.clase).joinedload(ClaseTutoria.semestre),
+            joinedload(Sesion.clase).joinedload(ClaseTutoria.asignaciones).joinedload(AsignacionTutorado.estudiante),
+            joinedload(Sesion.ambiente)
+        )
         .filter(Sesion.id == sesion_id)
         .first()
     )
@@ -104,43 +111,64 @@ def ver_detalle_tutoria(
     if not sesion:
         raise HTTPException(status_code=404, detail="Tutoría no encontrada")
 
-    # 3. Armar datos para el template (coinciden con tu HTML de detalle_tutoria.html)
-    tutoria = {
-        "tutor_nombre": f"{sesion.clase.tutor.usuario.nombres} "
-                        f"{sesion.clase.tutor.usuario.apellidos}",
-        "ambiente": (
-            sesion.ambiente.codigo
-            if sesion.ambiente
-            else (sesion.clase.ambiente.codigo if sesion.clase.ambiente else "N/A")
-        ),
-        "semestre": (
-            sesion.clase.semestre.codigo
-            if sesion.clase.semestre
-            else "N/A"
-        ),
-        "fecha": sesion.fecha.strftime("%d/%m/%Y"),
-        "resumen": sesion.tema or "Sin tema",
-        "detalles": getattr(sesion, "detalles", None) or "Sin detalles",
-    }
-
-    # Por ahora dejamos la lista de tutorados vacía
-    sesiones_convocados = [
-        {
-            "id": 1,
-            "estudiante_nombre": "Juan Pérez",
-            "escuela": "Ingeniería Informática",
-            "asistio": "Sí",
-            "derivacion_psico": "No"
-        }
-    ]
-
     return templates.TemplateResponse(
         "admin/tutoria_detalle.html",
         {
             "request": request,
             "user": usuario,
-            "tutoria": tutoria,
-            "sesiones": sesiones_convocados,
+            "sesion": sesion,
+        },
+    )
+
+@router.get("/tutorias/{sesion_id}/estudiante/{estudiante_id}")
+def ver_detalle_sesion_individual(
+    request: Request,
+    sesion_id: int,
+    estudiante_id: int,
+    db: Session = Depends(get_db)
+):
+    # 1. Admin Mock
+    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+
+    # 2. Obtener Sesion
+    sesion = (
+        db.query(Sesion)
+        .options(
+            joinedload(Sesion.clase).joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
+            joinedload(Sesion.clase).joinedload(ClaseTutoria.semestre),
+            joinedload(Sesion.ambiente)
+        )
+        .filter(Sesion.id == sesion_id)
+        .first()
+    )
+
+    if not sesion:
+        raise HTTPException(status_code=404, detail="Sesión no encontrada")
+
+    # 3. Obtener Estudiante (de la asignación)
+    # Buscamos la asignación específica para validar que el estudiante pertenece a la clase
+    asignacion = (
+        db.query(AsignacionTutorado)
+        .options(joinedload(AsignacionTutorado.estudiante))
+        .filter(
+            AsignacionTutorado.id_clase == sesion.id_clase,
+            AsignacionTutorado.id_estudiante == estudiante_id
+        )
+        .first()
+    )
+
+    if not asignacion:
+        raise HTTPException(status_code=404, detail="Estudiante no asignado a esta clase")
+
+    estudiante = asignacion.estudiante
+
+    return templates.TemplateResponse(
+        "admin/sesion_detalle.html",
+        {
+            "request": request,
+            "user": usuario,
+            "sesion": sesion,
+            "estudiante": estudiante
         },
     )
 #--------------------------------
