@@ -5,12 +5,14 @@
     --primary-blue: #2E25AC;
     --accent-blue: #4E44DC;
     --light-blue-bg: #E1E7FF;
-    
+
     --white: #FFFFFF;
     --text-dark: #1F2937;
-    --text-muted: #6B7280; /* Gris para los headers */
-    --danger: #EF4444;     /* Rojo para notificaciones */
-    
+    --text-muted: #6B7280;
+    /* Gris para los headers */
+    --danger: #EF4444;
+    /* Rojo para notificaciones */
+
     --radius-xl: 20px;
     --radius-l: 12px;
     --radius-m: 8px;
@@ -27,7 +29,7 @@ body {
     background-color: var(--white);
     height: 100vh;
     overflow: hidden;
-    font-size: 15px; 
+    font-size: 15px;
 }
 
 .layout-wrapper {
@@ -63,7 +65,7 @@ body {
     width: auto;
     object-fit: contain;
     align-self: center;
-    filter: brightness(0) invert(1); 
+    filter: brightness(0) invert(1);
 }
 
 .brand-text {
@@ -79,7 +81,7 @@ body {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px; 
+    gap: 10px;
 }
 
 .nav-item a {
@@ -151,7 +153,8 @@ body {
 .user-profile-section {
     display: flex;
     align-items: center;
-    gap: 20px; /* Separación entre campana y usuario */
+    gap: 20px;
+    /* Separación entre campana y usuario */
 }
 
 /* --- Notificaciones (Campana) Mejorada --- */
@@ -168,7 +171,8 @@ body {
 }
 
 .notification-bell:hover {
-    background-color: #F3F4F6; /* Gris muy suave al hover */
+    background-color: #F3F4F6;
+    /* Gris muy suave al hover */
 }
 
 /* Estilo para el SVG dentro de la campana */
@@ -178,7 +182,8 @@ body {
 }
 
 .notification-bell:hover svg path {
-    stroke: var(--primary-blue); /* Se pone azul al hover */
+    stroke: var(--primary-blue);
+    /* Se pone azul al hover */
 }
 
 /* Punto rojo */
@@ -191,7 +196,7 @@ body {
     background-color: var(--danger);
     border-radius: 50%;
     border: 1.5px solid var(--white);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Info Usuario --- */
@@ -204,17 +209,20 @@ body {
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--text-dark);
-    
+
     /* Propiedades de enlace */
-    text-decoration: none; /* Quita el subrayado típico de los links */
+    text-decoration: none;
+    /* Quita el subrayado típico de los links */
     cursor: pointer;
     transition: color 0.2s ease;
 }
 
 /* Efecto al pasar el mouse */
 .user-name-top:hover {
-    color: var(--primary-blue); /* Cambia al azul del tema */
-    text-decoration: underline; /* Opcional: agrega subrayado sutil si quieres */
+    color: var(--primary-blue);
+    /* Cambia al azul del tema */
+    text-decoration: underline;
+    /* Opcional: agrega subrayado sutil si quieres */
 }
 
 .user-role-top {
@@ -283,7 +291,7 @@ body {
 }
 
 .search-wrapper {
-    flex: 1; 
+    flex: 1;
     min-width: 0;
     position: relative;
 }
@@ -294,7 +302,7 @@ body {
     flex-grow: 0;
 }
 
-.search-input, 
+.search-input,
 .filter-select {
     width: 100%;
     height: 42px;
@@ -312,7 +320,7 @@ body {
     transition: all 0.2s ease;
 }
 
-.search-input:focus, 
+.search-input:focus,
 .filter-select:focus {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px rgba(46, 37, 172, 0.1);
@@ -356,7 +364,7 @@ body {
     margin-bottom: 12px;
 }
 
-.list-headers div, 
+.list-headers div,
 .list-headers .col-center {
     color: var(--text-muted) !important;
     font-size: 0.75rem;
@@ -369,6 +377,7 @@ body {
 .list-headers .col-center {
     text-align: center;
 }
+
 .list-headers div:last-child {
     text-align: center;
 }
@@ -376,7 +385,8 @@ body {
 .classes-list {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Espacio entre filas */
+    gap: 10px;
+    /* Espacio entre filas */
 }
 
 .class-item-link {
@@ -392,13 +402,14 @@ body {
     grid-template-columns: 2.5fr 3fr 0.8fr 0.8fr;
     align-items: center;
     background-color: var(--white);
-    
+
     /* Ajuste para hacer las filas menos anchas (más delgadas verticalmente) */
-    padding: 10px 25px; 
-    min-height: 60px; /* Altura mínima reducida */
-    
+    padding: 10px 25px;
+    min-height: 60px;
+    /* Altura mínima reducida */
+
     border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     border: 1px solid transparent;
     transition: all 0.2s ease;
 }
@@ -417,7 +428,8 @@ body {
 }
 
 .tutor-img {
-    width: 40px; /* Ligeramente más pequeño para la fila compacta */
+    width: 40px;
+    /* Ligeramente más pequeño para la fila compacta */
     height: 40px;
     border-radius: 50%;
     background-color: #9CA3AF;
@@ -456,4 +468,239 @@ body {
 .icon {
     width: 20px;
     height: 20px;
+}
+
+/*Detalle tutoria pey*/
+/* ===========================
+   DETALLE TUTORÍA (ADMIN)
+   =========================== */
+
+.tutoria-page-wrapper {
+    padding: 32px 40px 40px;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.tutoria-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 20px;
+}
+
+/* Card azul de información general */
+
+.tutoria-info-card {
+    background-color: #e6ecff;
+    /* azul muy claro */
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    line-height: 1.5;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.tutoria-info-card p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #111827;
+}
+
+.tutoria-info-card .label {
+    font-weight: 700;
+}
+
+/* Sección de sesiones */
+
+.tutoria-sesiones {
+    margin-top: 8px;
+}
+
+.sesiones-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+}
+
+/* Tabla de sesiones (parece tabla pero es div) */
+
+.sesiones-table {
+    background-color: #eef2ff;
+    border-radius: 14px;
+    padding: 16px 18px 20px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.sesiones-row {
+    display: grid;
+    grid-template-columns: 2fr 3fr 1fr 1.4fr;
+    align-items: center;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 999px;
+}
+
+.sesiones-header {
+    font-weight: 600;
+    color: #4b5563;
+    background: transparent;
+    border-radius: 0;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+
+.sesiones-row:not(.sesiones-header) {
+    background-color: #ffffff;
+    margin-top: 8px;
+}
+
+.sesiones-row:not(.sesiones-header):hover {
+    background-color: #f3f4ff;
+}
+
+.sesiones-row .col-center {
+    text-align: center;
+}
+
+.sesiones-empty {
+    text-align: center;
+    color: #6b7280;
+    font-size: 13px;
+    padding: 20px 0 8px;
+}
+
+/*agregado*/
+/* --- Ajustes globales para que el detalle se vea igual al diseño --- */
+
+main {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.page-wrapper {
+    width: 100%;
+    padding: 2rem 4rem;
+    /* Aumenta el espacio horizontal */
+}
+
+.detalle-container {
+    width: 100%;
+}
+
+.detalle-card {
+    width: 100%;
+    background: #e8edff;
+    padding: 2rem;
+    border-radius: 12px;
+}
+
+/* Tabla más ancha */
+.table-wrapper {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-spacing: 0 12px;
+}
+
+.table-wrapper td,
+.table-wrapper th {
+    padding: 18px;
+}
+
+/*agregado2*/
+/* ============================
+   DETALLE TUTORÍA (ADMIN)
+   ============================ */
+
+.tutoria-page-wrapper {
+    padding: 32px 64px 64px;
+}
+
+/* Título "Detalle tutoría" más arriba y azul */
+.tutoria-page-title {
+    margin-top: 8px;
+    margin-bottom: 24px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1D35C4;
+    /* azul similar al figma */
+}
+
+/* Card grande azul claro */
+.tutoria-info-card {
+    background: #E8EFFF;
+    border-radius: 18px;
+    padding: 24px 32px;
+    max-width: 1050px;
+    margin-bottom: 36px;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.tutoria-info-card p {
+    margin: 2px 0;
+}
+
+.tutoria-info-card .label {
+    font-weight: 600;
+}
+
+/* Bloque de sesiones como en el diseño */
+.tutoria-sesiones-card {
+    max-width: 1180px;
+}
+
+.sesiones-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+/* Caja azul que envuelve toda la tabla */
+.sesiones-card-table {
+    background: #E8EFFF;
+    border-radius: 18px;
+    padding: 20px 24px;
+}
+
+/* Encabezado y filas usan el mismo grid */
+.sesiones-row {
+    display: grid;
+    grid-template-columns: 2.4fr 2fr 0.7fr 1.1fr;
+    align-items: center;
+    column-gap: 24px;
+    font-size: 14px;
+}
+
+.sesiones-header {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* Cada fila estilo "pastilla" */
+.sesiones-item {
+    background: #F7F7FC;
+    border-radius: 18px;
+    padding: 10px 18px;
+    margin-bottom: 10px;
+}
+
+.sesiones-item:last-child {
+    margin-bottom: 0;
+}
+
+.col-center {
+    text-align: center;
+}
+
+.sesiones-empty {
+    text-align: center;
+    padding: 18px 0;
+    color: #7A7A7A;
+    font-size: 14px;
 }

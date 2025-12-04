@@ -14,7 +14,9 @@ from .api.admin import routes as admin_router
 from .api.admin import clases as admin_clases_router # <-- NUEVA RUTA
 from .api.tutor import routes as tutor_router
 from .api.verificador import routes as verificador_router
-
+#anadido
+from .api.admin import tutorias as admin_tutorias_router
+#---------
 # Configuración de directorios
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
@@ -88,12 +90,16 @@ app.include_router(auth_router.router, tags=["auth"])
 # 2. Rutas de Admin
 app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
 app.include_router(admin_clases_router.router, prefix="/admin", tags=["admin-clases"])
+app.include_router(admin_tutorias_router.router, tags=["admin-tutorias"])
+
 
 # 3. Rutas de Tutor
 app.include_router(tutor_router.router, prefix="/tutor", tags=["tutor"])
 
 # 4. Rutas de Verificador
 app.include_router(verificador_router.router, prefix="/verificador", tags=["verificador"])
+
+
 
 
 @app.get("/")

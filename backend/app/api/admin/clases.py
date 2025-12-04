@@ -12,6 +12,11 @@ from ...models.ambiente import Ambiente
 from ...models.clase_tutoria import ClaseTutoria
 from fastapi import Form
 from fastapi.responses import RedirectResponse
+#nuevos
+from fastapi import HTTPException
+# OJO: el nombre del modelo cámbialo por el TUYO
+from ...models.sesion import Sesion
+#-----------------
 
 router = APIRouter()
 
@@ -77,7 +82,60 @@ def ver_historial_clase(
         "clase": clase,
         "sesiones": sesiones_historial
     })
+#agregado---
+@router.get("/tutorias/{sesion_id}")
+def ver_detalle_tutoria(
+    request: Request,
+    sesion_id: int,
+    db: Session = Depends(get_db)
+):
+    # 1. Admin “mock”
+    usuario = db.query(Usuario).filter(
+        Usuario.correo == "admin@tutorias.com"
+    ).first()
 
+    # 2. Buscar la sesión por id
+    sesion = (
+        db.query(Sesion)
+        .filter(Sesion.id == sesion_id)
+        .first()
+    )
+
+    if not sesion:
+        raise HTTPException(status_code=404, detail="Tutoría no encontrada")
+
+    # 3. Armar datos para el template (coinciden con tu HTML de detalle_tutoria.html)
+    tutoria = {
+        "tutor_nombre": f"{sesion.clase.tutor.usuario.nombres} "
+                        f"{sesion.clase.tutor.usuario.apellidos}",
+        "ambiente": (
+            sesion.ambiente.codigo
+            if sesion.ambiente
+            else (sesion.clase.ambiente.codigo if sesion.clase.ambiente else "N/A")
+        ),
+        "semestre": (
+            sesion.clase.semestre.codigo
+            if sesion.clase.semestre
+            else "N/A"
+        ),
+        "fecha": sesion.fecha.strftime("%d/%m/%Y"),
+        "resumen": sesion.tema or "Sin tema",
+        "detalles": getattr(sesion, "detalles", None) or "Sin detalles",
+    }
+
+    # Por ahora dejamos la lista de tutorados vacía
+    sesiones_convocados = []
+
+    return templates.TemplateResponse(
+        "admin/tutoria_detalle.html",
+        {
+            "request": request,
+            "user": usuario,
+            "tutoria": tutoria,
+            "sesiones": sesiones_convocados,
+        },
+    )
+#--------------------------------
 
 @router.get("/clases/{clase_id}/editar")
 def editar_clase(

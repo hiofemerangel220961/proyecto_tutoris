@@ -72,6 +72,11 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             cursor: default;
         }
+
+        /* Hace que la fila se vea como clickeable */
+        .history-table tr.history-row {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -207,7 +212,7 @@
                         <tbody>
                             {% if sesiones %}
                             {% for sesion in sesiones %}
-                            <tr>
+                            <tr class="history-row" onclick="window.location.href='/admin/tutorias/{{ sesion.id }}';">
                                 <td>{{ sesion.fecha.strftime('%d/%m/%Y') }}</td>
                                 <td>{{ sesion.tema or 'Sin tema' }}</td>
                                 <td>{{ clase.tutor.usuario.nombres }} {{ clase.tutor.usuario.apellidos }}</td>
