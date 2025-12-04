@@ -124,7 +124,15 @@ def ver_detalle_tutoria(
     }
 
     # Por ahora dejamos la lista de tutorados vacía
-    sesiones_convocados = []
+    sesiones_convocados = [
+        {
+            "id": 1,
+            "estudiante_nombre": "Juan Pérez",
+            "escuela": "Ingeniería Informática",
+            "asistio": "Sí",
+            "derivacion_psico": "No"
+        }
+    ]
 
     return templates.TemplateResponse(
         "admin/tutoria_detalle.html",

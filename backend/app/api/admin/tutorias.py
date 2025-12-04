@@ -61,3 +61,61 @@ def ver_detalle_tutoria(
             "sesiones": sesiones,
         },
     )
+
+
+@router.get("/sesion/{sesion_id}")
+def ver_detalle_sesion(
+    request: Request,
+    sesion_id: int,
+    db: Session = Depends(get_db),
+):
+    # Admin de prueba (Tulio)
+    user = (
+        db.query(Usuario)
+        .filter(Usuario.correo == "admin@tutorias.com")
+        .first()
+    )
+
+    # 🔹 Mock Data for Session Detail
+    sesion = {
+        "id": sesion_id,
+        "fecha": "20/10/2025",
+        "semestre": "2025-II",
+        "ambiente": "201",
+        "derivacion": "No",
+        "tutor": {
+            "nombres": "Juan Carlos",
+            "apellidos": "Bodoque",
+            "dni": "67895432",
+            "correo": "BodoqueJuan@gmail.com",
+            "telefono": "925297345",
+            "ambiente": "Cubil 045"
+        },
+        "tutorado": {
+            "nombres": "Mario Hugo",
+            "apellidos": "Bodoque",
+            "dni": "67895432",
+            "correo": "BodoqueJuan@gmail.com",
+            "telefono": "925297345",
+            "fecha_nacimiento": "20/10/2005"
+        },
+        "acuerdos": {
+            "academico": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+            "personal": "Acuerdos personales de prueba...",
+            "profesional": "Acuerdos profesionales de prueba..."
+        },
+        "observaciones": {
+            "academico": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+            "personal": "Observaciones personales de prueba...",
+            "profesional": "Observaciones profesionales de prueba..."
+        }
+    }
+
+    return templates.TemplateResponse(
+        "admin/sesion_detalle.html",
+        {
+            "request": request,
+            "user": user,
+            "sesion": sesion,
+        },
+    )

@@ -1,21 +1,6 @@
-/* Importar Nunito Sans desde Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;400;600;700;800&display=swap');
-
-:root {
-    --primary-blue: #2E25AC;
-    --accent-blue: #4E44DC;
-    --light-blue-bg: #E1E7FF;
-
-    --white: #FFFFFF;
-    --text-dark: #1F2937;
-    --text-muted: #6B7280;
-    /* Gris para los headers */
-    --danger: #EF4444;
-    /* Rojo para notificaciones */
-
-    --radius-xl: 20px;
-    --radius-l: 12px;
-    --radius-m: 8px;
+--radius-xl: 20px;
+--radius-l: 12px;
+--radius-m: 8px;
 }
 
 * {
@@ -688,6 +673,23 @@ main {
     border-radius: 18px;
     padding: 10px 18px;
     margin-bottom: 10px;
+    grid-template-columns: 2.4fr 2fr 0.7fr 1.1fr;
+    align-items: center;
+    column-gap: 24px;
+    font-size: 14px;
+}
+
+.sesiones-header {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* Cada fila estilo "pastilla" */
+.sesiones-item {
+    background: #F7F7FC;
+    border-radius: 18px;
+    padding: 10px 18px;
+    margin-bottom: 10px;
 }
 
 .sesiones-item:last-child {
@@ -703,4 +705,160 @@ main {
     padding: 18px 0;
     color: #7A7A7A;
     font-size: 14px;
+}
+
+.col-center {
+    text-align: center;
+}
+
+.sesiones-empty {
+    text-align: center;
+    padding: 18px 0;
+    color: #7A7A7A;
+    font-size: 14px;
+}
+
+/* ESTILOS PARA DETALLE DE SESIÓN (sesion_detalle.html) */
+
+.sesion-general-card {
+    background-color: #E8EFFF;
+    border-radius: 18px;
+    padding: 24px 32px;
+    margin-bottom: 30px;
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.card-title-lg {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.btn-download-sesion {
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-download-sesion:hover {
+    background-color: #4338ca;
+}
+
+.general-info-grid p {
+    margin-bottom: 8px;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.people-cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.person-card {
+    background-color: #F3E8FF;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.person-info p {
+    margin-bottom: 6px;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+/* TABS */
+.tabs-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.tab-btn:hover {
+    opacity: 0.9;
+}
+
+.tab-btn.active {
+    opacity: 1;
+}
+
+.tab-content {
+    animation: fadeEffect 0.5s;
+}
+
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.info-block {
+    background-color: #E8EFFF;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.info-block h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.info-block p {
+    color: #4B5563;
+    line-height: 1.5;
+}
+
+.bottom-actions {
+    margin-top: 30px;
+}
+
+.btn-download-adjunto {
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.btn-download-adjunto:hover {
+    background-color: #4338ca;
 }

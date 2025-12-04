@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle tutoría - Tutoris</title>
-    <!-- Usamos el CSS del dashboard -->
+    <title>Sesion de tutoria - Tutoris</title>
+
+    <!-- Usamos el mismo CSS del dashboard -->
     <link rel="stylesheet" href="/static/css/admin/dashboard.css">
 </head>
 
 <body>
-
     <div class="layout-wrapper">
 
-        <!-- SIDEBAR IZQUIERDO -->
+        <!-- SIDEBAR IZQUIERDO (igual que el dashboard) -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <img src="/static/img/logo-tutoris.png" alt="Tutoris Logo" class="logo-img">
@@ -79,7 +79,7 @@
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1z">
                             </path>
                         </svg>
-                        Configuración (Semestres)
+                        Configuración
                     </a>
                 </li>
             </ul>
@@ -99,7 +99,7 @@
         <!-- CONTENIDO PRINCIPAL -->
         <main class="main-content">
 
-            <!-- Header Superior -->
+            <!-- HEADER SUPERIOR -->
             <header class="top-header">
                 <div class="user-profile-section">
                     <div class="notification-bell">
@@ -139,49 +139,119 @@
                 </div>
             </header>
 
-            <!-- CONTENIDO DETALLE TUTORÍA -->
-            <div class="dashboard-card tutoria-page-wrapper">
+            <!-- CONTENIDO SESIÓN DETALLE -->
+            <div class="tutoria-page-wrapper">
 
-                <h1 class="tutoria-page-title">Detalle tutoría</h1>
+                <h1 class="tutoria-page-title">Sesion de tutoria</h1>
 
-                <section class="tutoria-info-card">
-                    <p><span class="label">Tutor:</span> {{ tutoria.tutor_nombre }}</p>
-                    <p><span class="label">Ambiente:</span> {{ tutoria.ambiente }}</p>
-                    <p><span class="label">Semestre:</span> {{ tutoria.semestre }}</p>
-                    <p><span class="label">Fecha:</span> {{ tutoria.fecha }}</p>
-                    <p><span class="label">Resumen:</span> {{ tutoria.resumen }}</p>
-                    <p><span class="label">Detalles:</span> {{ tutoria.detalles }}</p>
-                </section>
-
-                <section class="tutoria-sesiones-card">
-                    <h2 class="sesiones-title">Sesiones con tutorados convocados</h2>
-
-                    <div class="sesiones-card-table">
-                        <div class="sesiones-row sesiones-header">
-                            <div>Nombres y Apellidos</div>
-                            <div>Escuela Profesional</div>
-                            <div class="col-center">Asistió</div>
-                            <div class="col-center">Derivación psicológica</div>
-                        </div>
-
-                        {% for s in sesiones %}
-                        <div class="sesiones-row sesiones-item">
-                            <div><a href="/admin/sesion/{{ s.id }}" class="link-primary">{{ s.estudiante_nombre }}</a>
-                            </div>
-                            <div>{{ s.escuela }}</div>
-                            <div class="col-center">{{ s.asistio }}</div>
-                            <div class="col-center">{{ s.derivacion_psico }}</div>
-                        </div>
-                        {% else %}
-                        <div class="sesiones-empty">No hay sesiones registradas para esta tutoría.</div>
-                        {% endfor %}
+                <!-- DATOS GENERALES -->
+                <section class="sesion-general-card">
+                    <div class="card-header-flex">
+                        <h2 class="card-title-lg">Datos generales</h2>
+                        <button class="btn-download-sesion">Descargar sesión</button>
+                    </div>
+                    <div class="general-info-grid">
+                        <p><strong>Fecha:</strong> {{ sesion.fecha }}</p>
+                        <p><strong>Semestre:</strong> {{ sesion.semestre }}</p>
+                        <p><strong>Ambiente:</strong> {{ sesion.ambiente }}</p>
+                        <p><strong>Derivación Psicologica:</strong> {{ sesion.derivacion }}</p>
                     </div>
                 </section>
+
+                <!-- TUTOR Y TUTORADO (2 columnas) -->
+                <div class="people-cards-row">
+                    <!-- TUTOR -->
+                    <section class="person-card">
+                        <h2 class="card-title-lg">Tutor</h2>
+                        <div class="person-info">
+                            <p><strong>Nombres:</strong> {{ sesion.tutor.nombres }}</p>
+                            <p><strong>Apellidos:</strong> {{ sesion.tutor.apellidos }}</p>
+                            <p><strong>DNI:</strong> {{ sesion.tutor.dni }}</p>
+                            <p><strong>Correo Electrónico:</strong> {{ sesion.tutor.correo }}</p>
+                            <p><strong>Telefono:</strong> {{ sesion.tutor.telefono }}</p>
+                            <p><strong>Ambiente:</strong> {{ sesion.tutor.ambiente }}</p>
+                        </div>
+                    </section>
+
+                    <!-- TUTORADO -->
+                    <section class="person-card">
+                        <h2 class="card-title-lg">Tutorado</h2>
+                        <div class="person-info">
+                            <p><strong>Nombres:</strong> {{ sesion.tutorado.nombres }}</p>
+                            <p><strong>Apellidos:</strong> {{ sesion.tutorado.apellidos }}</p>
+                            <p><strong>DNI:</strong> {{ sesion.tutorado.dni }}</p>
+                            <p><strong>Correo Electrónico:</strong> {{ sesion.tutorado.correo }}</p>
+                            <p><strong>Telefono:</strong> {{ sesion.tutorado.telefono }}</p>
+                            <p><strong>Fecha Nacimiento:</strong> {{ sesion.tutorado.fecha_nacimiento }}</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- TABS -->
+                <div class="tabs-container">
+                    <button class="tab-btn active" onclick="openTab(event, 'Academico')">Academico</button>
+                    <button class="tab-btn" onclick="openTab(event, 'Personal')">Personal</button>
+                    <button class="tab-btn" onclick="openTab(event, 'Profesional')">Profesional</button>
+                </div>
+
+                <!-- CONTENIDO TABS -->
+                <div id="Academico" class="tab-content" style="display: block;">
+                    <section class="info-block">
+                        <h3>Acuerdos generales:</h3>
+                        <p>{{ sesion.acuerdos.academico }}</p>
+                    </section>
+                    <section class="info-block">
+                        <h3>.Observaciones:</h3>
+                        <p>{{ sesion.observaciones.academico }}</p>
+                    </section>
+                </div>
+
+                <div id="Personal" class="tab-content" style="display: none;">
+                    <section class="info-block">
+                        <h3>Acuerdos generales:</h3>
+                        <p>{{ sesion.acuerdos.personal }}</p>
+                    </section>
+                    <section class="info-block">
+                        <h3>.Observaciones:</h3>
+                        <p>{{ sesion.observaciones.personal }}</p>
+                    </section>
+                </div>
+
+                <div id="Profesional" class="tab-content" style="display: none;">
+                    <section class="info-block">
+                        <h3>Acuerdos generales:</h3>
+                        <p>{{ sesion.acuerdos.profesional }}</p>
+                    </section>
+                    <section class="info-block">
+                        <h3>.Observaciones:</h3>
+                        <p>{{ sesion.observaciones.profesional }}</p>
+                    </section>
+                </div>
+
+                <!-- BOTÓN DESCARGAR ADJUNTO -->
+                <div class="bottom-actions">
+                    <button class="btn-download-adjunto">Descargar documento adjunto</button>
+                </div>
 
             </div>
         </main>
     </div>
 
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </body>
 
 </html>
