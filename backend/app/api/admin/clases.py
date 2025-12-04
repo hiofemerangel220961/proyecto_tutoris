@@ -7,6 +7,11 @@ from sqlalchemy.orm import Session
 from ...db.deps import get_db
 from ...models.usuario import Usuario
 from ...services.clase import ClaseService
+from ...models.tutor import Tutor
+from ...models.ambiente import Ambiente
+from ...models.clase_tutoria import ClaseTutoria
+from fastapi import Form
+from fastapi.responses import RedirectResponse
 
 router = APIRouter()
 
@@ -72,3 +77,55 @@ def ver_historial_clase(
         "clase": clase,
         "sesiones": sesiones_historial
     })
+
+
+@router.get("/clases/{clase_id}/editar")
+def editar_clase(
+    request: Request, 
+    clase_id: int,
+    db: Session = Depends(get_db)
+):
+    # 1. Obtener Admin (Tulio) - Mock por ahora
+    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+
+    # 2. Obtener detalle de la clase
+    clase = ClaseService.get_clase_detalle(db, clase_id)
+    
+    if not clase:
+        raise HTTPException(status_code=404, detail="Clase no encontrada")
+
+    # 3. Obtener todos los tutores y ambientes disponibles
+    tutores = db.query(Tutor).join(Usuario).all()
+    ambientes = db.query(Ambiente).all()
+
+    return templates.TemplateResponse("admin/clase_editar.html", {
+        "request": request,
+        "user": usuario,
+        "clase": clase,
+        "tutores": tutores,
+        "ambientes": ambientes
+    })
+
+
+@router.post("/clases/{clase_id}/editar")
+def guardar_edicion_clase(
+    request: Request,
+    clase_id: int,
+    tutor_id: int = Form(...),
+    ambiente_id: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    # 1. Obtener la clase
+    clase = db.query(ClaseTutoria).filter(ClaseTutoria.id == clase_id).first()
+    
+    if not clase:
+        raise HTTPException(status_code=404, detail="Clase no encontrada")
+
+    # 2. Actualizar datos
+    clase.id_tutor = tutor_id
+    clase.id_ambiente = ambiente_id
+    
+    db.commit()
+    
+    # 3. Redirigir al detalle de la clase
+    return RedirectResponse(url=f"/admin/clases/{clase_id}", status_code=303)
