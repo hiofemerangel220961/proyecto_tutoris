@@ -32,6 +32,7 @@ from .api.tutor import routes as tutor_router
 from .api.verificador import routes as verificador_router
 #anadido
 from .api.admin import tutorias as admin_tutorias_router
+from .api.admin import usuarios as admin_usuarios_router
 #---------
 # Configuración de directorios
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -107,6 +108,7 @@ app.include_router(auth_router.router, tags=["auth"])
 app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
 app.include_router(admin_tutorias_router.router, tags=["admin-tutorias"])
 app.include_router(admin_clases_router.router, prefix="/admin", tags=["admin-clases"])
+app.include_router(admin_usuarios_router.router, prefix="/admin", tags=["admin-usuarios"])
 
 
 # 3. Rutas de Tutor

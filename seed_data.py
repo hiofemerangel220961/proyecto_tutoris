@@ -275,6 +275,31 @@ def seed_data():
                 tipo="INFO"
             )
             db.add(notif)
+        
+        # 14. Extra Users for Testing User Management
+        print("... Creando Usuarios Extra para Gestión")
+        # Extra Admin
+        if not db.query(Usuario).filter(Usuario.correo == "admin2@tutorias.com").first():
+             u_admin2 = Usuario(nombres="Mario", apellidos="Hugo", correo="admin2@tutorias.com", telefono="925294599", contrasena_hash=hash_password("123"), id_rol=rol_admin.id_rol, estado="ACTIVO")
+             db.add(u_admin2)
+        
+        # Verificadores
+        rol_verif = db.query(Rol).filter(Rol.nombre_rol == "VERIFICADOR").first()
+        if not db.query(Usuario).filter(Usuario.correo == "verif1@tutorias.com").first():
+             u_verif = Usuario(nombres="Juan Carlos", apellidos="Bodoque", correo="verif1@tutorias.com", telefono="925294500", contrasena_hash=hash_password("123"), id_rol=rol_verif.id_rol, estado="ACTIVO")
+             db.add(u_verif)
+        
+        # Solicitudes
+        print("... Creando Solicitudes Extra")
+        solicits = [
+            ("Patana", "Tufillo", "patana@mail.com", "TUTOR"),
+            ("Policarpo", "Avendano", "poli@mail.com", "VERIFICADOR"),
+            ("Mico", "Micofono", "mico@mail.com", "ADMINISTRADOR")
+        ]
+        for nom, ape, cor, rol in solicits:
+            if not db.query(SolicitudCuenta).filter(SolicitudCuenta.correo == cor).first():
+                db.add(SolicitudCuenta(nombres=nom, apellidos=ape, correo=cor, rol_solicitado=rol, estado="PENDIENTE"))
+
         db.commit()
 
         print("Datos de prueba actualizados y cargados exitosamente.")

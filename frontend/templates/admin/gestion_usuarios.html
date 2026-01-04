@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Usuarios - Tutoris{% endblock %}
+
+{% block content %}
+<style>
+    .users-container {
+        padding: 30px 40px;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a237e;
+        margin-bottom: 25px;
+    }
+
+    /* Tabs Navigation */
+    .tabs-nav {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .tab-pill {
+        padding: 10px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #666;
+        background-color: #9fa8da;
+        /* Default inactive grey/purple-ish */
+        color: white;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .tab-pill.inactive {
+        background-color: #9ca3af;
+        /* Gray for inactive */
+    }
+
+    .tab-pill.active {
+        background-color: #4338ca;
+        /* Deep Purple for active */
+        box-shadow: 0 4px 10px rgba(67, 56, 202, 0.3);
+    }
+
+    /* Using specific colors from image roughly */
+    .btn-tab {
+        background-color: #8da2fb;
+        /* Light periwinkle default */
+        color: white;
+    }
+
+    .btn-tab.active {
+        background-color: #4c46e5;
+        /* Strong purple */
+    }
+
+
+    /* List Container */
+    .list-wrapper {
+        background-color: #e5e9ff;
+        /* Periwinkle */
+        border-radius: 12px;
+        padding: 30px 40px;
+        min-height: 500px;
+        /* Layout stability */
+    }
+
+    /* Header Row */
+    .list-header {
+        display: grid;
+        /* Columns: Name (2), Email (2), Phone (1), Role/State (1), Actions (1.5) */
+        grid-template-columns: 2fr 2.5fr 1fr 1fr 1.5fr;
+        padding: 0 25px 15px 25px;
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* List Item Row */
+    .list-item {
+        background-color: white;
+        border-radius: 30px;
+        /* Pill shape */
+        padding: 15px 25px;
+        margin-bottom: 15px;
+        display: grid;
+        grid-template-columns: 2fr 2.5fr 1fr 1fr 1.5fr;
+        align-items: center;
+        color: #333;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .action-col {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        justify-content: flex-end;
+    }
+
+    /* Buttons */
+    .btn-action {
+        padding: 8px 25px;
+        border-radius: 20px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .btn-activate {
+        background-color: #4c46e5;
+        /* Purple */
+    }
+
+    .btn-deactivate {
+        background-color: #4c46e5;
+        /* Purple */
+    }
+
+    .btn-accept {
+        background-color: #4c46e5;
+        /* Purple */
+    }
+
+    .icon-delete {
+        color: #ef4444;
+        /* Red */
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Forms for actions (invisible) */
+    .inline-form {
+        display: inline;
+    }
+</style>
+
+<div class="users-container">
+    <h1 class="page-title">Gestionar usuarios</h1>
+
+    <!-- TABS -->
+    <div class="tabs-nav">
+        <a href="/admin/usuarios/administradores"
+            class="tab-pill {% if active_tab == 'administradores' %}active{% else %}inactive{% endif %}">Administradores</a>
+        <a href="/admin/usuarios/tutores"
+            class="tab-pill {% if active_tab == 'tutores' %}active{% else %}inactive{% endif %}">Tutores</a>
+        <a href="/admin/usuarios/verificadores"
+            class="tab-pill {% if active_tab == 'verificadores' %}active{% else %}inactive{% endif %}">Verificadores</a>
+        <a href="/admin/usuarios/solicitudes"
+            class="tab-pill {% if active_tab == 'solicitudes' %}active{% else %}inactive{% endif %}">Solicitudes de
+            acceso</a>
+    </div>
+
+    <div class="list-wrapper">
+        <!-- Header -->
+        <div class="list-header">
+            <div>Nombres y Apellidos</div>
+            <div>Correo</div>
+            <div>Telefono</div>
+            <!-- Dynamic Header for State/Role -->
+            <div>{% if active_tab == 'solicitudes' %}Rol{% else %}Estado{% endif %}</div>
+            <div style="text-align: right;"></div>
+        </div>
+
+        <!-- List Items -->
+        {% if items %}
+        {% for item in items %}
+        <div class="list-item">
+            <!-- Names -->
+            <div>{{ item.nombres }} {{ item.apellidos }}</div>
+
+            <!-- Email -->
+            <div>{{ item.correo }}</div>
+
+            <!-- Phone (Handles difference in models if any, Solicitud might not have phone or is nullable) -->
+            <div>{{ item.telefono or '925294599' }}</div> <!-- Mock phone if missing, matching image -->
+
+            <!-- Status / Role -->
+            <div>
+                {% if active_tab == 'solicitudes' %}
+                {{ item.rol_solicitado | capitalize }}
+                {% else %}
+                {{ item.estado | capitalize }}
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="action-col">
+                {% if active_tab == 'solicitudes' %}
+                <!-- ACCEPT / REJECT -->
+                <form action="/admin/solicitudes/{{ item.id_solicitud }}/aceptar" method="POST" class="inline-form">
+                    <button type="submit" class="btn-action btn-accept">Aceptar</button>
+                </form>
+
+                <form action="/admin/solicitudes/{{ item.id_solicitud }}/rechazar" method="POST" class="inline-form">
+                    <button type="submit" style="background:none; border:none; padding:0;">
+                        <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                {% else %}
+                <!-- ACTIVATE / DEACTIVATE -->
+                {% if item.estado == 'ACTIVO' %}
+                <form action="/admin/usuarios/{{ item.id_usuario }}/desactivar" method="POST" class="inline-form">
+                    <button type="submit" class="btn-action btn-deactivate">Desactivar</button>
+                </form>
+                {% else %}
+                <form action="/admin/usuarios/{{ item.id_usuario }}/activar" method="POST" class="inline-form">
+                    <button type="submit" class="btn-action btn-activate">Activar</button>
+                </form>
+                {% endif %}
+
+                <!-- DELETE -->
+                <form action="/admin/usuarios/{{ item.id_usuario }}/eliminar" method="POST" class="inline-form"
+                    onsubmit="return confirm('¿Eliminar usuario?');">
+                    <button type="submit" style="background:none; border:none; padding:0;">
+                        <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div style="text-align: center; color: #666; margin-top: 50px;">
+            No hay elementos en esta categoría.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
