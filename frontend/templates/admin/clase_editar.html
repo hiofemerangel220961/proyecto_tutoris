@@ -18,6 +18,22 @@
         margin-bottom: 25px;
     }
 
+    .form-input {
+        flex: 1;
+        height: 45px;
+        padding: 0 15px;
+        border-radius: 8px;
+        border: none;
+        background-color: #F5F5F5;
+        font-size: 1rem;
+        color: #333;
+        outline: none;
+    }
+
+    .form-input:focus {
+        box-shadow: 0 0 0 2px #5B5FC7;
+    }
+
     .form-label {
         width: 150px;
         font-weight: 700;
@@ -106,13 +122,14 @@
 
         <div class="form-group">
             <label for="ambiente" class="form-label">Ambiente:</label>
-            <select name="ambiente_id" id="ambiente" class="form-select">
+            <input type="text" name="ambiente_codigo" id="ambiente" class="form-input"
+                placeholder="Ingrese código del ambiente" value="{{ clase.ambiente.codigo if clase.ambiente else '' }}"
+                list="ambientes-list" required>
+            <datalist id="ambientes-list">
                 {% for ambiente in ambientes %}
-                <option value="{{ ambiente.id }}" {% if ambiente.id==clase.ambiente_id %}selected{% endif %}>
-                    {{ ambiente.codigo }} - {{ ambiente.tipo }}
-                </option>
+                <option value="{{ ambiente.codigo }}">{{ ambiente.tipo }}</option>
                 {% endfor %}
-            </select>
+            </datalist>
         </div>
 
         <div class="form-actions">

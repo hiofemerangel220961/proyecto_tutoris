@@ -178,34 +178,40 @@ def seed_data():
             db.add(bloque)
             db.commit()
 
-            # 10. Sesiones Programadas
-            print("... Creando Sesiones Programadas")
-            # 1 Realizada, 1 Programada
-            sesion_realizada = SesionProgramada(
-                id_bloque=bloque.id,
-                id_clase=clase.id,
-                id_tutor=tutor_1.id,
-                id_ambiente=ambiente_1.id,
-                tipo_sesion="Grupal",
-                fecha_hora_inicio=datetime.utcnow() - timedelta(days=7),
-                fecha_hora_fin=datetime.utcnow() - timedelta(days=7, hours=-2),
-                resumen="Sesión de Bienvenida (Realizada)",
-                estado="REALIZADA"
-            )
-            db.add(sesion_realizada)
+            # 10. Sesiones Programadas (Mass creation for UI testing)
+            print("... Creando Sesiones Programadas Mock")
             
-            sesion_programada = SesionProgramada(
-                id_bloque=bloque.id,
-                id_clase=clase.id,
-                id_tutor=tutor_1.id,
-                id_ambiente=ambiente_1.id,
-                tipo_sesion="Grupal",
-                fecha_hora_inicio=datetime.utcnow() + timedelta(days=2),
-                fecha_hora_fin=datetime.utcnow() + timedelta(days=2, hours=2),
-                resumen="Sesión de Seguimiento (Programada)",
-                estado="PROGRAMADA"
-            )
-            db.add(sesion_programada)
+            # 5 Realizadas
+            for i in range(5):
+                s_real = SesionProgramada(
+                    id_bloque=bloque.id,
+                    id_clase=clase.id,
+                    id_tutor=tutor_1.id,
+                    id_ambiente=ambiente_1.id,
+                    tipo_sesion="Grupal",
+                    fecha_hora_inicio=datetime.utcnow() - timedelta(days=10+i),
+                    fecha_hora_fin=datetime.utcnow() - timedelta(days=10+i, hours=-2),
+                    resumen=f"Tutorias de seguimiento {i+1}",
+                    estado="REALIZADA"
+                )
+                db.add(s_real)
+                sesion_realizada = s_real # Assign the last one to the variable used below
+
+            # 5 Programadas
+            for i in range(5):
+                s_prog = SesionProgramada(
+                    id_bloque=bloque.id,
+                    id_clase=clase.id,
+                    id_tutor=tutor_1.id,
+                    id_ambiente=ambiente_1.id,
+                    tipo_sesion="Grupal",
+                    fecha_hora_inicio=datetime.utcnow() + timedelta(days=5+i),
+                    fecha_hora_fin=datetime.utcnow() + timedelta(days=5+i, hours=2),
+                    resumen=f"Tutorias de seguimiento {i+1}",
+                    estado="PROGRAMADA"
+                )
+                db.add(s_prog)
+            
             db.commit()
             
             # 11. SesionTutoria (Ejecucion) y Detalle

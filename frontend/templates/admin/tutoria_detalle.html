@@ -3,54 +3,142 @@
 {% block title %}Detalle tutoría - Tutoris{% endblock %}
 
 {% block content %}
-<div class="tutoria-page-wrapper">
+<style>
+    .tutoria-container {
+        padding: 30px 40px;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
 
-    <h1 class="tutoria-page-title">Detalle tutoria</h1>
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a237e;
+        margin-bottom: 25px;
+    }
+
+    /* Info Card */
+    .info-card {
+        background-color: #e5e9ff;
+        /* Periwinkle */
+        border-radius: 12px;
+        padding: 30px 40px;
+        margin-bottom: 40px;
+        color: #333;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .info-item {
+        margin-bottom: 8px;
+    }
+
+    .info-item strong {
+        font-weight: 700;
+        margin-right: 5px;
+        color: #000;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        /* Dark gray/black */
+        margin-bottom: 20px;
+    }
+
+    /* Students List Container (Blue) */
+    .students-list-wrapper {
+        background-color: #e5e9ff;
+        border-radius: 12px;
+        padding: 30px 40px;
+        min-height: 300px;
+    }
+
+    /* Header Row */
+    .list-header {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr 1fr;
+        padding: 0 20px 10px 20px;
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* List Item Row */
+    .list-item {
+        background-color: white;
+        border-radius: 25px;
+        /* Pill shape */
+        padding: 18px 25px;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr 1fr;
+        align-items: center;
+        color: #333;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .col-center {
+        text-align: center;
+    }
+</style>
+
+<div class="tutoria-container">
+    <h1 class="page-title">Detalle tutoria</h1>
 
     <!-- INFO SESIÓN -->
-    <section class="tutoria-info-card"
-        style="background-color: #E8F0FE; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
-        <p><strong>Tutor:</strong> {{ sesion.clase.tutor.usuario.nombres }} {{ sesion.clase.tutor.usuario.apellidos }}
-        </p>
-        <p><strong>Ambiente:</strong> {{ sesion.ambiente.codigo if sesion.ambiente else (sesion.clase.ambiente.codigo if
-            sesion.clase.ambiente else 'N/A') }}</p>
-        <p><strong>Semestre:</strong> {{ sesion.clase.semestre.codigo if sesion.clase.semestre else 'N/A' }}</p>
-        <p><strong>Fecha:</strong> {{ sesion.fecha.strftime('%d/%m/%Y') }}</p>
-        <p><strong>Resumen:</strong> {{ sesion.tema or 'Sin tema registrado' }}</p>
-        <p><strong>Detalles:</strong> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-            Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-    </section>
+    <div class="info-card">
+        <div class="info-item"><strong>Tutor:</strong> {{ sesion.clase.tutor.usuario.nombres }} {{
+            sesion.clase.tutor.usuario.apellidos }}</div>
+        <div class="info-item"><strong>Ambiente:</strong> {{ sesion.ambiente.codigo if sesion.ambiente else
+            (sesion.clase.ambiente.codigo if sesion.clase.ambiente else 'N/A') }}</div>
+        <div class="info-item"><strong>Semestre:</strong> {{ sesion.clase.semestre.codigo if sesion.clase.semestre else
+            'N/A' }}</div>
+        <div class="info-item"><strong>Fecha:</strong> {{ sesion.fecha_hora_inicio.strftime('%d/%m/%Y') }}</div>
+        <div class="info-item"><strong>Resumen:</strong> {{ sesion.tema or 'Sin tema registrado' }}</div>
+        <div class="info-item">
+            <strong>Detalles:</strong><br>
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+            scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
+            electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of
+            Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like
+            Aldus PageMaker including versions of Lorem Ipsum.
+        </div>
+    </div>
 
     <!-- LISTA DE ESTUDIANTES -->
-    <section class="tutoria-sesiones-card">
-        <h2 class="sesiones-title">Sesiones con tutorados convocados</h2>
+    <h2 class="section-title">Sesiones con tutorados convocados</h2>
 
-        <div class="sesiones-card-table">
-            <div class="sesiones-row sesiones-header">
-                <div>Nombres y Apellidos</div>
-                <div>Escuela Profesional</div>
-                <div class="col-center">Asistió</div>
-                <div class="col-center">Derivación psicológica</div>
-            </div>
-
-            {% if sesion.clase.asignaciones %}
-            {% for asignacion in sesion.clase.asignaciones %}
-            <a href="/admin/tutorias/{{ sesion.id }}/estudiante/{{ asignacion.estudiante.id }}"
-                class="sesiones-row sesiones-item">
-                <div>
-                    {{ asignacion.estudiante.nombres }} {{ asignacion.estudiante.apellidos }}
-                </div>
-                <div>{{ sesion.clase.carrera.nombre if sesion.clase.carrera else 'Ingeniería Informática y de Sistemas'
-                    }}</div>
-                <div class="col-center">No</div> <!-- Placeholder -->
-                <div class="col-center">No</div> <!-- Placeholder -->
-            </a>
-            {% endfor %}
-            {% else %}
-            <div class="sesiones-empty">No hay estudiantes asignados a esta clase.</div>
-            {% endif %}
+    <div class="students-list-wrapper">
+        <div class="list-header">
+            <div>Nombres y Apellidos</div>
+            <div>Escuela Profesional</div>
+            <div class="col-center">Asistió</div>
+            <div class="col-center">Derivación psicológica</div>
         </div>
-    </section>
+
+        {% if sesion.clase.asignaciones %}
+        {% for asignacion in sesion.clase.asignaciones %}
+        <div class="list-item">
+            <div>{{ asignacion.estudiante.nombres }} {{ asignacion.estudiante.apellidos }}</div>
+            <div>{{ sesion.clase.carrera.nombre if sesion.clase.carrera else 'Ingeniería Informática y de Sistemas' }}
+            </div>
+            <!-- Mock Data for Attendance/Derivation as they are not in model per se for this view yet -->
+            <div class="col-center">Si</div>
+            <div class="col-center">No</div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div style="text-align: center; color: #666; margin-top: 30px;">
+            No hay estudiantes asignados a esta clase.
+        </div>
+        {% endif %}
+    </div>
 
 </div>
 {% endblock %}

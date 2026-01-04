@@ -110,18 +110,19 @@
 </style>
 
 <div class="program-container">
-    <h1 class="page-title">Nuevo cronograma 2025-II</h1>
+    <h1 class="page-title">{% if bloque %}Editar{% else %}Nuevo{% endif %} cronograma {{ "2025-II" }}</h1>
 
     <div class="form-card">
-        <form action="/admin/tutorias/programar" method="POST">
+        <form action="/admin/tutorias/programar/{% if bloque %}{{ bloque.id }}/editar{% endif %}" method="POST">
 
             <!-- Carrera -->
             <div class="form-group">
                 <label class="form-label" for="carrera">Carrera</label>
                 <select name="carrera_id" id="carrera" class="form-select" required>
-                    <option value="" disabled selected>Seleccione una carrera</option>
+                    <option value="" disabled {% if not bloque %}selected{% endif %}>Seleccione una carrera</option>
                     {% for carrera in carreras %}
-                    <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                    <option value="{{ carrera.id }}" {% if bloque and bloque.id_carrera==carrera.id %}selected{% endif
+                        %}>{{ carrera.nombre }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -129,30 +130,33 @@
             <!-- Fecha inicio -->
             <div class="form-group">
                 <label class="form-label" for="fecha_inicio">Fecha inicio:</label>
-                <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-input" required>
+                <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-input" required
+                    value="{% if bloque %}{{ bloque.fecha_inicio.strftime('%Y-%m-%d') }}{% endif %}">
             </div>
 
             <!-- Fecha fin -->
             <div class="form-group">
                 <label class="form-label" for="fecha_fin">Fecha fin:</label>
-                <input type="date" name="fecha_fin" id="fecha_fin" class="form-input" required>
+                <input type="date" name="fecha_fin" id="fecha_fin" class="form-input" required
+                    value="{% if bloque %}{{ bloque.fecha_fin.strftime('%Y-%m-%d') }}{% endif %}">
             </div>
 
             <!-- Resumen -->
             <div class="form-group">
                 <label class="form-label" for="resumen">Resumen:</label>
-                <input type="text" name="resumen" id="resumen" class="form-input">
+                <input type="text" name="resumen" id="resumen" class="form-input"
+                    value="{% if bloque %}{{ bloque.resumen }}{% endif %}">
             </div>
 
             <!-- Descripción -->
             <div class="form-group" style="align-items: flex-start;">
                 <label class="form-label" for="descripcion" style="margin-top: 12px;">Descripción</label>
-                <textarea name="descripcion" id="descripcion" class="form-textarea"></textarea>
+                <textarea name="descripcion" id="descripcion"
+                    class="form-textarea">{% if bloque %}{{ bloque.descripcion or '' }}{% endif %}</textarea>
             </div>
 
             <!-- Botones -->
             <div class="form-actions">
-                <!-- El flujo real de Cancelar podria ser ir al dashboard -->
                 <a href="/admin/dashboard" class="btn btn-cancel">Cancelar</a>
                 <button type="submit" class="btn btn-next">Siguiente</button>
             </div>

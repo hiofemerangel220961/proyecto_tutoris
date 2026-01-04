@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Historial de Tutorías - Tutoris{% endblock %}
+{% block title %}Tutorías Programadas - Tutoris{% endblock %}
 
 {% block content %}
 <style>
-    .historial-container {
+    .programadas-container {
         padding: 30px 40px;
         width: 100%;
         max-width: 1400px;
@@ -32,7 +32,8 @@
     /* Header Row */
     .list-header {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr 50px;
+        /* Added col for action */
         padding: 0 20px 15px 20px;
         color: #666;
         font-size: 0.9rem;
@@ -49,7 +50,7 @@
         /* Taller padding */
         margin-bottom: 15px;
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr 50px;
         align-items: center;
         transition: all 0.2s ease;
         cursor: pointer;
@@ -66,11 +67,6 @@
         box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
     }
 
-    /* Simulate the selected state from the image */
-    .list-item.selected {
-        border-color: #2196F3;
-    }
-
     .resumen-text {
         color: #333;
     }
@@ -83,10 +79,25 @@
         font-weight: 600;
         color: #333;
     }
+
+    .action-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .edit-icon {
+        color: #333;
+        transition: color 0.2s;
+    }
+
+    .edit-icon:hover {
+        color: #2196F3;
+    }
 </style>
 
-<div class="historial-container">
-    <h1 class="page-title">Historial tutorias programadas</h1>
+<div class="programadas-container">
+    <h1 class="page-title">Tutorias programadas</h1>
 
     <div class="list-wrapper">
         <!-- Header -->
@@ -95,22 +106,33 @@
             <div>Carrera</div>
             <div>Fecha Inicio</div>
             <div>Fecha Fin</div>
+            <div></div> <!-- Empty for action -->
         </div>
 
         <!-- List -->
         {% if sesiones %}
         {% for sesion in sesiones %}
-        <!-- Link to the Session Detail -->
-        <div class="list-item" onclick="window.location.href='/admin/tutorias/{{ sesion.id }}'">
+        <!-- Removed onclick from the row container as requested -->
+        <div class="list-item" style="cursor: default;">
             <div class="resumen-text">{{ sesion.tema or sesion.clase.nombre or 'Sin tema' }}</div>
             <div class="carrera-text">{{ sesion.clase.carrera.nombre }}</div>
             <div class="fecha-text">{{ sesion.fecha_hora_inicio.strftime('%d/%m/%Y') }}</div>
             <div class="fecha-text">{{ sesion.fecha_hora_fin.strftime('%d/%m/%Y') }}</div>
+            <div class="action-col">
+                <!-- Pencil Icon: Navigates to Block Edit Screen -->
+                <div class="edit-icon" style="cursor: pointer;"
+                    onclick="window.location.href='/admin/tutorias/programar/{{ sesion.id_bloque }}/editar'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                    </svg>
+                </div>
+            </div>
         </div>
         {% endfor %}
         {% else %}
         <div style="text-align: center; color: #666; margin-top: 50px;">
-            No hay tutorías realizadas en el historial.
+            No hay tutorías programadas (pendientes).
         </div>
         {% endif %}
     </div>

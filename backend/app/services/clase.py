@@ -7,7 +7,10 @@ from ..models.tutor import Tutor
 from ..models.usuario import Usuario
 from ..models.semestre import Semestre
 from ..models.asignacion_tutorado import AsignacionTutorado
+from ..models.semestre import Semestre
+from ..models.asignacion_tutorado import AsignacionTutorado
 from ..models.sesion_programada import SesionProgramada
+from ..models.ambiente import Ambiente
 
 class ClaseService:
 
@@ -63,3 +66,35 @@ class ClaseService:
             joinedload(ClaseTutoria.sesiones_programadas).joinedload(SesionProgramada.ambiente),
             joinedload(ClaseTutoria.asignaciones).joinedload(AsignacionTutorado.estudiante)
         ).filter(ClaseTutoria.id == clase_id).first()
+
+    @staticmethod
+    def assign_ambiente_by_codigo(db: Session, clase_id: int, codigo: str) -> Optional[ClaseTutoria]:
+        """
+        Asigna un ambiente a una clase buscándolo por código. 
+        Si no existe, lo crea.
+        """
+        clase = db.query(ClaseTutoria).filter(ClaseTutoria.id == clase_id).first()
+        if not clase:
+            return None
+
+        # Normalizar código
+        codigo = codigo.strip()
+        if not codigo:
+            return clase # No hacer nada si está vacío
+
+        ambiente = db.query(Ambiente).filter(Ambiente.codigo == codigo).first()
+        if not ambiente:
+            ambiente = Ambiente(
+                nombre=codigo,
+                codigo=codigo,
+                tipo="AULA",
+                activo=True
+            )
+            db.add(ambiente)
+            db.commit()
+            db.refresh(ambiente)
+        
+        clase.id_ambiente = ambiente.id
+        db.commit()
+        db.refresh(clase)
+        return clase

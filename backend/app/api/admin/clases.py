@@ -321,7 +321,7 @@ def guardar_edicion_clase(
     request: Request,
     clase_id: int,
     tutor_id: int = Form(...),
-    ambiente_id: int = Form(...),
+    ambiente_codigo: str = Form(...),
     db: Session = Depends(get_db)
 ):
     # 1. Obtener la clase
@@ -330,11 +330,13 @@ def guardar_edicion_clase(
     if not clase:
         raise HTTPException(status_code=404, detail="Clase no encontrada")
 
-    # 2. Actualizar datos
+    # 2. Actualizar Tutor
     clase.id_tutor = tutor_id
-    clase.id_ambiente = ambiente_id
-    
     db.commit()
+
+    # 3. Actualizar Ambiente (usando servicio)
+    from ...services.clase import ClaseService
+    ClaseService.assign_ambiente_by_codigo(db, clase.id, ambiente_codigo)
     
-    # 3. Redirigir al detalle de la clase
+    # 4. Redirigir al detalle de la clase
     return RedirectResponse(url=f"/admin/clases/{clase_id}", status_code=303)
