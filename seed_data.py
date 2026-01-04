@@ -1,223 +1,283 @@
+import random
+from datetime import datetime, timedelta
 import sys
 import os
-from datetime import date, datetime
 
-# Aseguramos que Python encuentre el módulo 'backend'
+# Add root to sys.path to allow imports if needed, though running from root usually works
 sys.path.append(os.getcwd())
 
 from backend.app.db.database import SessionLocal, engine, Base
-from backend.app.models.usuario import Usuario
+from backend.app.core.security import hash_password
 from backend.app.models.rol import Rol
+from backend.app.models.usuario import Usuario
 from backend.app.models.carrera import Carrera
 from backend.app.models.semestre import Semestre
-from backend.app.models.tutor import Tutor
-from backend.app.models.clase_tutoria import ClaseTutoria
 from backend.app.models.ambiente import Ambiente
+from backend.app.models.tutor import Tutor
 from backend.app.models.estudiante import Estudiante
+from backend.app.models.clase_tutoria import ClaseTutoria
 from backend.app.models.asignacion_tutorado import AsignacionTutorado
-from backend.app.models.sesion import Sesion
-from datetime import timedelta
-from backend.app.core.security import hash_password
+# New Models
+from backend.app.models.sesion_programada import SesionProgramada
+from backend.app.models.sesion_tutoria import SesionTutoria
+from backend.app.models.bloque_programacion_tutorias import BloqueProgramacionTutorias
+from backend.app.models.detalle_tutoria import DetalleTutoria
+from backend.app.models.documento_adjunto import DocumentoAdjunto
+from backend.app.models.notificacion import Notificacion
+from backend.app.models.solicitud_cuenta import SolicitudCuenta
 
-# Crear tablas si no existen
-Base.metadata.create_all(bind=engine)
-db = SessionLocal()
+# Listas de datos realistas
+NOMBRES = ["Juan", "Maria", "Carlos", "Ana", "Luis", "Elena", "Pedro", "Sofia", "Miguel", "Lucia", "Jose", "Paula", "David", "Carmen", "Jorge", "Isabel"]
+APELLIDOS = ["Garcia", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Perez", "Sanchez", "Ramirez", "Torres", "Flores", "Rivera", "Gomez", "Diaz"]
 
-print("Iniciando carga de datos...")
+def get_random_name():
+    return random.choice(NOMBRES)
 
-# 1. Carreras
-c1 = db.query(Carrera).filter_by(codigo="IIS").first()
-if not c1:
-    c1 = Carrera(nombre="Ing. Informática y de Sistemas", codigo="IIS", facultad="Ingeniería")
-    db.add(c1)
+def get_random_lastname():
+    return random.choice(APELLIDOS)
 
-c2 = db.query(Carrera).filter_by(codigo="IC").first()
-if not c2:
-    c2 = Carrera(nombre="Ing. Civil", codigo="IC", facultad="Ingeniería")
-    db.add(c2)
-db.commit()
+def seed_data():
+    db = SessionLocal()
+    try:
+        print("... Iniciando poblado de datos...")
+        # Reset DB (Drop all tables and recreate)
+        Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
 
-# Recargar objetos para asegurar que tenemos los IDs
-db.refresh(c1)
-db.refresh(c2)
-
-# 2. Semestre
-sem = db.query(Semestre).filter_by(codigo="2025-II").first()
-if not sem:
-    sem = Semestre(
-        codigo="2025-II",
-        anio=2025,
-        periodo="II",
-        fecha_inicio=date(2025, 8, 1),
-        fecha_fin=date(2025, 12, 20),
-        activo=True,
-        estado_actual="ACTIVO"
-    )
-    db.add(sem)
-    db.commit()
-db.refresh(sem)
-
-# 3. Ambiente
-amb = db.query(Ambiente).filter_by(codigo="101").first()
-if not amb:
-    amb = Ambiente(nombre="Aula 101", codigo="101", tipo="AULA", capacidad=30)
-    db.add(amb)
-    db.commit()
-db.refresh(amb)
-
-# 4. Roles
-roles = ["ADMINISTRADOR", "TUTOR", "VERIFICADOR"]
-for r in roles:
-    existe = db.query(Rol).filter_by(nombre_rol=r).first()
-    if not existe:
-        db.add(Rol(nombre_rol=r, descripcion=f"Rol {r}"))
-db.commit()
-
-rol_tutor = db.query(Rol).filter_by(nombre_rol="TUTOR").first()
-
-# 5. Tutores y Clases
-#    👉 Ahora definimos 10 tutores
-tutores_data = [
-    ("Juan Carlos", "Bodoque"),
-    ("Tulio", "Triviño"),
-    ("Juanín", "Juan Harry"),
-    ("Patricio", "Estrella"),
-    ("Bob", "Esponja"),
-    ("Lisa", "Simpson"),
-    ("Homero", "Simpson"),
-    ("María", "Pérez"),
-    ("Carlos", "Ramírez"),
-    ("Ana", "Sánchez"),
-]
-
-for idx, (nombre, apellido) in enumerate(tutores_data, start=1):
-    email_limpio = f"{nombre.lower().replace(' ', '')}@unsaac.edu.pe"
-
-    # Usuario
-    usuario = db.query(Usuario).filter(Usuario.correo == email_limpio).first()
-    if not usuario:
-        usuario = Usuario(
-            nombres=nombre,
-            apellidos=apellido,
-            correo=email_limpio,
-            telefono="987654321",
-            contrasena_hash=hash_password("123"),  # Contraseña genérica
-            id_rol=rol_tutor.id_rol,
-            estado="ACTIVO"
-        )
-        db.add(usuario)
-        db.commit()
-        print(f"Usuario creado: {nombre} ({email_limpio})")
-
-    db.refresh(usuario)
-
-    # Asignamos carrera de forma clara:
-    # - Primeros 5 tutores → IIS
-    # - Siguientes 5 tutores → IC
-    carrera_asignada = c1 if idx <= 5 else c2
-
-    # Tutor
-    tutor = db.query(Tutor).filter(Tutor.id_usuario == usuario.id_usuario).first()
-    if not tutor:
-        tutor = Tutor(
-            id_usuario=usuario.id_usuario,
-            id_carrera=carrera_asignada.id,   # usamos .id del objeto Carrera
-            codigo_docente=f"DOC-{usuario.id_usuario}",
-            activo=True
-        )
-        db.add(tutor)
+        # 1. Roles
+        print("... Creando Roles")
+        roles = ["ADMINISTRADOR", "TUTOR", "VERIFICADOR", "ESTUDIANTE"]
+        for nombre in roles:
+            if not db.query(Rol).filter_by(nombre_rol=nombre).first():
+                db.add(Rol(nombre_rol=nombre, descripcion=f"Rol de {nombre}"))
         db.commit()
 
-    db.refresh(tutor)
+        # 2. Admin User
+        print("... Verificando Admin")
+        rol_admin = db.query(Rol).filter_by(nombre_rol="ADMINISTRADOR").first()
+        admin_user = db.query(Usuario).filter_by(correo="admin@tutorias.com").first()
+        if not admin_user:
+            admin_user = Usuario(
+                nombres="Tulio",
+                apellidos="Tribiño",
+                dni="12345678",
+                correo="admin@tutorias.com",
+                telefono="999888777",
+                contrasena_hash=hash_password("admin123"),
+                id_rol=rol_admin.id_rol,
+                estado="ACTIVO"
+            )
+            db.add(admin_user)
+            db.commit()
 
-    # Clase de tutoría (1 clase por tutor)
-    nombre_clase = f"Tutoría {nombre}"
-    clase = db.query(ClaseTutoria).filter_by(nombre=nombre_clase).first()
-    if not clase:
-        clase = ClaseTutoria(
-            nombre=nombre_clase,
-            id_tutor=tutor.id,               # id interno del Tutor
-            id_carrera=carrera_asignada.id,
-            id_semestre=sem.id,
-            id_ambiente=amb.id,
-            activo=True
-        )
-        db.add(clase)
+        # 3. Semestres
+        print("... Creando Semestres")
+        semestres = ["2025-I", "2025-II"]
+        for sem in semestres:
+            if not db.query(Semestre).filter_by(codigo=sem).first():
+                db.add(Semestre(codigo=sem, anio=2025, periodo=sem.split("-")[1], fecha_inicio=datetime.utcnow(), fecha_fin=datetime.utcnow()+timedelta(days=120)))
         db.commit()
-        print(f"   Clase creada: {nombre_clase}")
 
-    db.refresh(clase)
+        # 4. Carreras
+        print("... Creando Carreras")
+        carreras = ["Ing. Informática y de Sistemas", "Ing. Civil", "Ing. Eléctrica"]
+        for car in carreras:
+            if not db.query(Carrera).filter_by(nombre=car).first():
+                db.add(Carrera(nombre=car, codigo=car[:3].upper()))
+        db.commit()
 
-    # 5.1 Sesiones (👉 2 sesiones por clase)
-    sesiones_existentes = db.query(Sesion).filter_by(id_clase=clase.id).count()
-    if sesiones_existentes < 5: # Aumentamos a 5 para tener historial
-        fecha_base = datetime.now()
+        # 5. Ambientes
+        print("... Creando Ambientes")
+        ambientes = ["201", "301", "Lab-A", "Cubil 045"]
+        for amb in ambientes:
+            if not db.query(Ambiente).filter_by(codigo=amb).first():
+                db.add(Ambiente(nombre=f"Ambiente {amb}", codigo=amb, tipo="AULA", capacidad=30, ubicacion="Pabellon A"))
+        db.commit()
+
+        # 6. Tutores
+        print("... Creando Tutores")
+        rol_tutor = db.query(Rol).filter_by(nombre_rol="TUTOR").first()
+        ambiente_def = db.query(Ambiente).first()
+        carrera_is = db.query(Carrera).first()
         
-        # 2 sesiones futuras (PROGRAMADAS)
-        for i in range(1, 3):
-            nueva_fecha = fecha_base + timedelta(days=i*7) # Una cada semana
-            sesion = Sesion(
-                id_clase=clase.id,
-                id_ambiente=amb.id,
-                fecha=nueva_fecha,
-                tema=f"Sesión {i}: Seguimiento Académico",
-                estado="PROGRAMADA" # ESTADO PENDIENTE
-            )
-            db.add(sesion)
-            print(f"      Sesión programada: {sesion.tema} para {nueva_fecha.date()}")
-            
-        # 3 sesiones pasadas (HISTORIAL - REALIZADAS)
-        for i in range(1, 4):
-            fecha_pasada = fecha_base - timedelta(days=i*7) # Semanas atrás
-            sesion_pasada = Sesion(
-                id_clase=clase.id,
-                id_ambiente=amb.id,
-                fecha=fecha_pasada,
-                tema=f"Sesión Pasada {i}: Introducción y Diagnóstico",
-                estado="REALIZADA" # ESTADO HECHO
-            )
-            db.add(sesion_pasada)
-            print(f"      Sesión historial: {sesion_pasada.tema} para {fecha_pasada.date()}")
-            
+        if db.query(Tutor).count() < 3:
+            for i in range(3):
+                u_tutor = Usuario(
+                    nombres=get_random_name(),
+                    apellidos=get_random_lastname(),
+                    dni=f"8765432{i}",
+                    correo=f"tutor{i}@unsaac.edu.pe",
+                    contrasena_hash=hash_password("123456"),
+                    id_rol=rol_tutor.id_rol,
+                    estado="ACTIVO"
+                )
+                db.add(u_tutor)
+                db.flush()
+                tutor = Tutor(
+                    id_usuario=u_tutor.id_usuario, 
+                    id_carrera=carrera_is.id, 
+                    id_ambiente_defecto=ambiente_def.id,
+                    oficina=f"OF-{i+100}"
+                )
+                db.add(tutor)
         db.commit()
 
-    # 6. Estudiantes y Asignación (👉 2 alumnos por clase)
-    for i in range(1, 3):  # 1 y 2 → total 2 estudiantes
-        # Código único por estudiante
-        codigo_est = f"{carrera_asignada.codigo}25{tutor.id}{i}"
-        est = db.query(Estudiante).filter_by(codigo=codigo_est).first()
+        # 7. Estudiantes
+        print("... Creando Estudiantes")
+        if db.query(Estudiante).count() < 10:
+            for i in range(10):
+                est = Estudiante(
+                    codigo=f"22098{i}",
+                    dni=f"7379264{i}",
+                    nombres=get_random_name(),
+                    apellidos=get_random_lastname(),
+                    correo=f"alumno{i}@unsaac.edu.pe",
+                    telefono=f"98765432{i}",
+                    id_carrera=carrera_is.id,
+                    estado_academico="REGULAR",
+                    fecha_ingreso=datetime(2022, 3, 15)
+                )
+                db.add(est)
+        db.commit()
 
-        if not est:
-            est = Estudiante(
-                codigo=codigo_est,
-                dni=f"7000{tutor.id}{i}",
-                nombres=f"Alumno{i}",
-                apellidos=f"De {nombre}",
-                correo=f"alumno{i}.{nombre.lower().replace(' ', '')}@est.unsaac.edu.pe",
-                id_carrera=carrera_asignada.id,
-                estado_academico="REGULAR"
+        # 8. Clases y Asignaciones
+        print("... Creando Clases")
+        tutor_1 = db.query(Tutor).first()
+        semestre_act = db.query(Semestre).order_by(Semestre.id.desc()).first()
+        ambiente_1 = db.query(Ambiente).first()
+
+        clase = db.query(ClaseTutoria).filter_by(nombre="Tutoría I").first()
+        if not clase:
+            clase = ClaseTutoria(
+                nombre="Tutoría I",
+                id_tutor=tutor_1.id,
+                id_carrera=carrera_is.id,
+                id_semestre=semestre_act.id,
+                id_ambiente=ambiente_1.id
             )
-            db.add(est)
+            db.add(clase)
+            db.flush()
+            
+            # Asignar estudiantes
+            estudiantes = db.query(Estudiante).limit(5).all()
+            for est in estudiantes:
+                db.add(AsignacionTutorado(id_clase=clase.id, id_estudiante=est.id))
+            db.commit()
+            
+            # 9. Bloque de Programacion
+            print("... Creando Bloque de Programacion")
+            bloque = BloqueProgramacionTutorias(
+                id_carrera=carrera_is.id,
+                id_semestre=semestre_act.id,
+                fecha_inicio=datetime.utcnow(),
+                fecha_fin=datetime.utcnow() + timedelta(days=30),
+                resumen="Bloque 1 - 2025-II",
+                descripcion="Primer bloque de tutorías integrales",
+                creado_por=admin_user.id_usuario
+            )
+            db.add(bloque)
             db.commit()
 
-        db.refresh(est)
-
-        # Asignar a la clase
-        asignacion = db.query(AsignacionTutorado).filter_by(
-            id_clase=clase.id,
-            id_estudiante=est.id
-        ).first()
-
-        if not asignacion:
-            asignacion = AsignacionTutorado(
+            # 10. Sesiones Programadas
+            print("... Creando Sesiones Programadas")
+            # 1 Realizada, 1 Programada
+            sesion_realizada = SesionProgramada(
+                id_bloque=bloque.id,
                 id_clase=clase.id,
-                id_estudiante=est.id,
-                estado="VIGENTE",
-                fecha_asignacion=datetime.utcnow()
+                id_tutor=tutor_1.id,
+                id_ambiente=ambiente_1.id,
+                tipo_sesion="Grupal",
+                fecha_hora_inicio=datetime.utcnow() - timedelta(days=7),
+                fecha_hora_fin=datetime.utcnow() - timedelta(days=7, hours=-2),
+                resumen="Sesión de Bienvenida (Realizada)",
+                estado="REALIZADA"
             )
-            db.add(asignacion)
+            db.add(sesion_realizada)
+            
+            sesion_programada = SesionProgramada(
+                id_bloque=bloque.id,
+                id_clase=clase.id,
+                id_tutor=tutor_1.id,
+                id_ambiente=ambiente_1.id,
+                tipo_sesion="Grupal",
+                fecha_hora_inicio=datetime.utcnow() + timedelta(days=2),
+                fecha_hora_fin=datetime.utcnow() + timedelta(days=2, hours=2),
+                resumen="Sesión de Seguimiento (Programada)",
+                estado="PROGRAMADA"
+            )
+            db.add(sesion_programada)
             db.commit()
-            print(f"      Alumno asignado: {est.nombres} {est.apellidos} a {nombre_clase}")
+            
+            # 11. SesionTutoria (Ejecucion) y Detalle
+            print("... Registrando Ejecucion de Sesion (SesionTutoria + Detalle)")
+            if sesion_realizada.id:
+                # Simulamos que asistieron los 3 primeros
+                for est in estudiantes[:3]:
+                    st = SesionTutoria(
+                        id_sesion_programada=sesion_realizada.id,
+                        id_tutor=tutor_1.id,
+                        id_estudiante=est.id,
+                        tipo_tutoria="Grupal",
+                        fecha_hora_realizacion=sesion_realizada.fecha_hora_inicio,
+                        estado="REALIZADA"
+                    )
+                    db.add(st)
+                    db.flush()
+                    
+                    # Detalle por estudiante
+                    detalle = DetalleTutoria(
+                        id_sesion_tutoria=st.id,
+                        detalle_academico="El estudiante muestra buen rendimiento pero reporta estrés.",
+                        observaciones_academico="Derivar a psicología si persiste.",
+                        derivado_psicologia=True
+                    )
+                    db.add(detalle)
+                    
+                    # Documento Adjunto (ej. ficha de seguimiento)
+                    doc = DocumentoAdjunto(
+                        id_estudiante=est.id,
+                        id_sesion_tutoria=st.id,
+                        subido_por=tutor_1.id_usuario,
+                        tipo_documento="Ficha",
+                        nombre_archivo="ficha_seguimiento.pdf",
+                        ruta_archivo="/files/fichas/ficha_001.pdf",
+                        descripcion="Ficha de tutoría inicial"
+                    )
+                    db.add(doc)
+            db.commit()
 
-print("Datos verificados y creados exitosamente.")
-db.close()
+        # 12. Solicitudes de Cuenta
+        print("... Creando Solicitudes de Cuenta")
+        if not db.query(SolicitudCuenta).first():
+            sol = SolicitudCuenta(
+                nombres="Nuevo",
+                apellidos="Docente",
+                correo="nuevo.docente@unsaac.edu.pe",
+                rol_solicitado="TUTOR",
+                estado="PENDIENTE"
+            )
+            db.add(sol)
+        db.commit()
+
+        # 13. Notificaciones
+        print("... Creando Notificaciones")
+        if not db.query(Notificacion).first():
+            notif = Notificacion(
+                id_usuario_destino=tutor_1.id_usuario,
+                titulo="Recordatorio de Tutoría",
+                mensaje="Recuerde subir el informe de la sesión realizada.",
+                tipo="INFO"
+            )
+            db.add(notif)
+        db.commit()
+
+        print("Datos de prueba actualizados y cargados exitosamente.")
+
+    except Exception as e:
+        print(f"Error al poblar datos: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    seed_data()

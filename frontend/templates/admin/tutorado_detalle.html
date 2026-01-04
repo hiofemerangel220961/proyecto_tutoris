@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Tutorado - Tutoris{% endblock %}
+
+{% block content %}
+<!-- Título de la página -->
+<h1 class="tutoria-page-title">Tutorado</h1>
+
+<!-- Card de Información del Tutorado -->
+<div class="tutoria-info-card">
+    <div class="class-header-content">
+        <!-- Avatar Grande -->
+        <!-- Usamos la misma estructura que en clase_detalle para consistencia -->
+        <div class="tutor-avatar-large">
+            {% if estudiante.usuario.foto_perfil_url %}
+            <img src="{{ estudiante.usuario.foto_perfil_url }}" alt="Estudiante">
+            {% else %}
+            <!-- Placeholder SVG -->
+            <div
+                style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center;">
+                <svg style="width:50px;height:50px;color:#666;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Detalles del Tutorado -->
+        <div class="tutor-details">
+            <p><span class="label">Nombres:</span> {{ estudiante.nombres }}</p>
+            <p><span class="label">Apellidos:</span> {{ estudiante.apellidos }}</p>
+            <p><span class="label">DNI:</span> {{ estudiante.dni }}</p>
+            <p><span class="label">Correo Electrónico:</span> {{ estudiante.correo }}</p>
+            <p><span class="label">Telefono:</span> {{ estudiante.telefono }}</p>
+            <!-- Dirección Hardcoded por ahora ya que no está en el modelo Estudiante explícitamente -->
+            <p><span class="label">Direccion:</span> Calle Enetel B-10</p>
+            <p><span class="label">Tutor:</span> {{ clase.tutor.usuario.nombres }} {{ clase.tutor.usuario.apellidos }}
+            </p>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="action-buttons">
+            <a href="#" class="btn-action btn-download" style="background-color: #4F46E5;">
+                Descargar Detalles
+            </a>
+            <a href="/admin/clases/{{ clase.id }}/tutorados/{{ estudiante.id }}/editar" class="btn-action btn-edit"
+                style="background-color: #4F46E5;">
+                Editar Datos
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Historial de sesiones -->
+<div class="tutorados-section"> <!-- Reusing styling class -->
+    <h2 class="sesiones-title">Historial de sesiones</h2>
+
+    <div class="sesiones-card-table">
+        <!-- Header Tabla -->
+        <!-- Ajustamos grid-template-columns inline para coincidir con la imagen -->
+        <div class="sesiones-row sesiones-header" style="grid-template-columns: 1.5fr 3fr 1.5fr 1fr 1fr 0.8fr 1fr;">
+            <div>Fecha</div>
+            <div>Resumen</div>
+            <div>Tutor</div>
+            <div>Ambiente</div>
+            <div>Programado</div>
+            <div>Asistio</div>
+            <div>Derivacion</div>
+        </div>
+
+        <!-- Filas -->
+        {% if historial_sesiones %}
+        {% for sesion in historial_sesiones %}
+        <div class="sesiones-item sesiones-row"
+            style="grid-template-columns: 1.5fr 3fr 1.5fr 1fr 1fr 0.8fr 1fr; cursor: default;">
+            <div>{{ sesion.fecha_hora_inicio.strftime('%d/%m/%Y') }}</div>
+            <div>{{ sesion.resumen or 'Tutoria de seguimiento' }}</div>
+            <div>{{ clase.tutor.usuario.nombres }} {{ clase.tutor.usuario.apellidos }}</div>
+            <div>{{ sesion.ambiente.codigo if sesion.ambiente else (clase.ambiente.codigo if clase.ambiente else '201')
+                }}</div>
+            <div>Si</div> <!-- Hardcoded Programado -->
+            <div>Si</div> <!-- Hardcoded Asistio (placeholder) -->
+            <div>No</div> <!-- Hardcoded Derivacion (placeholder) -->
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="sesiones-empty">
+            No hay historial de sesiones disponible.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

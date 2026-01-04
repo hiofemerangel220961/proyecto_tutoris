@@ -6,6 +6,22 @@ from .db.database import Base, engine, SessionLocal
 from .models import rol, usuario
 from .models.rol import Rol
 from .models.usuario import Usuario
+# Modelos adicionales para que SQLAlchemy los reconozca en create_all
+from .models.carrera import Carrera
+from .models.semestre import Semestre
+from .models.ambiente import Ambiente
+from .models.tutor import Tutor
+from .models.estudiante import Estudiante
+from .models.clase_tutoria import ClaseTutoria
+from .models.asignacion_tutorado import AsignacionTutorado
+from .models.bloque_programacion_tutorias import BloqueProgramacionTutorias
+from .models.sesion_programada import SesionProgramada
+from .models.sesion_tutoria import SesionTutoria
+from .models.detalle_tutoria import DetalleTutoria
+from .models.documento_adjunto import DocumentoAdjunto
+from .models.notificacion import Notificacion
+from .models.solicitud_cuenta import SolicitudCuenta
+
 from .core.security import hash_password
 
 # Importamos los routers
@@ -89,8 +105,8 @@ app.include_router(auth_router.router, tags=["auth"])
 
 # 2. Rutas de Admin
 app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
-app.include_router(admin_clases_router.router, prefix="/admin", tags=["admin-clases"])
 app.include_router(admin_tutorias_router.router, tags=["admin-tutorias"])
+app.include_router(admin_clases_router.router, prefix="/admin", tags=["admin-clases"])
 
 
 # 3. Rutas de Tutor

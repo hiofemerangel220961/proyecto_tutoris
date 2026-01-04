@@ -14,9 +14,12 @@ from fastapi import Form
 from fastapi.responses import RedirectResponse
 #nuevos
 from fastapi import HTTPException
+from fastapi import HTTPException
 # OJO: el nombre del modelo cámbialo por el TUYO
-from ...models.sesion import Sesion
+from ...models.sesion_programada import SesionProgramada
+from ...models.sesion_tutoria import SesionTutoria
 from ...models.asignacion_tutorado import AsignacionTutorado
+from ...models.estudiante import Estudiante
 #-----------------
 
 router = APIRouter()
@@ -42,16 +45,16 @@ def ver_detalle_clase(
         raise HTTPException(status_code=404, detail="Clase no encontrada")
 
     # 3. Filtrar sesiones programadas (PENDIENTES)
-    sesiones_programadas = [s for s in clase.sesiones if s.estado == 'PROGRAMADA']
+    sesiones = [s for s in clase.sesiones_programadas if s.estado == 'PROGRAMADA']
     
     # Ordenar por fecha ascendente (la más próxima primero)
-    sesiones_programadas.sort(key=lambda x: x.fecha)
+    sesiones.sort(key=lambda x: x.fecha_hora_inicio)
 
     return templates.TemplateResponse("admin/clase_detalle.html", {
         "request": request,
         "user": usuario,
         "clase": clase,
-        "sesiones": sesiones_programadas # Pasamos la lista filtrada
+        "sesiones": sesiones # Pasamos la lista filtrada
     })
 
 
@@ -72,10 +75,10 @@ def ver_historial_clase(
         raise HTTPException(status_code=404, detail="Clase no encontrada")
 
     # 3. Filtrar sesiones pasadas (REALIZADAS - HISTORIAL)
-    sesiones_historial = [s for s in clase.sesiones if s.estado == 'REALIZADA']
+    sesiones_historial = [s for s in clase.sesiones_programadas if s.estado == 'REALIZADA']
     
     # Ordenar por fecha descendente (más reciente primero)
-    sesiones_historial.sort(key=lambda x: x.fecha, reverse=True)
+    sesiones_historial.sort(key=lambda x: x.fecha_hora_inicio, reverse=True)
 
     return templates.TemplateResponse("admin/historial_tutorias.html", {
         "request": request,
@@ -97,14 +100,14 @@ def ver_detalle_tutoria(
 
     # 2. Buscar la sesión por id con relaciones
     sesion = (
-        db.query(Sesion)
+        db.query(SesionProgramada)
         .options(
-            joinedload(Sesion.clase).joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
-            joinedload(Sesion.clase).joinedload(ClaseTutoria.semestre),
-            joinedload(Sesion.clase).joinedload(ClaseTutoria.asignaciones).joinedload(AsignacionTutorado.estudiante),
-            joinedload(Sesion.ambiente)
+            joinedload(SesionProgramada.clase).joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
+            joinedload(SesionProgramada.clase).joinedload(ClaseTutoria.semestre),
+            joinedload(SesionProgramada.clase).joinedload(ClaseTutoria.asignaciones).joinedload(AsignacionTutorado.estudiante),
+            joinedload(SesionProgramada.ambiente)
         )
-        .filter(Sesion.id == sesion_id)
+        .filter(SesionProgramada.id == sesion_id)
         .first()
     )
 
@@ -132,13 +135,13 @@ def ver_detalle_sesion_individual(
 
     # 2. Obtener Sesion
     sesion = (
-        db.query(Sesion)
+        db.query(SesionProgramada)
         .options(
-            joinedload(Sesion.clase).joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
-            joinedload(Sesion.clase).joinedload(ClaseTutoria.semestre),
-            joinedload(Sesion.ambiente)
+            joinedload(SesionProgramada.clase).joinedload(ClaseTutoria.tutor).joinedload(Tutor.usuario),
+            joinedload(SesionProgramada.clase).joinedload(ClaseTutoria.semestre),
+            joinedload(SesionProgramada.ambiente)
         )
-        .filter(Sesion.id == sesion_id)
+        .filter(SesionProgramada.id == sesion_id)
         .first()
     )
 
@@ -171,6 +174,118 @@ def ver_detalle_sesion_individual(
             "estudiante": estudiante
         },
     )
+
+@router.get("/clases/{clase_id}/tutorados/{estudiante_id}")
+def ver_detalle_tutorado(
+    request: Request,
+    clase_id: int,
+    estudiante_id: int,
+    db: Session = Depends(get_db)
+):
+    # 1. Admin Mock
+    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+
+    # 2. Get Class Detail
+    clase = ClaseService.get_clase_detalle(db, clase_id)
+    if not clase:
+         raise HTTPException(status_code=404, detail="Clase no encontrada")
+
+    # 3. Get Student Detail
+    estudiante = db.query(Estudiante).options(joinedload(Estudiante.usuario)).filter(Estudiante.id == estudiante_id).first()
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+
+    # 4. Get Session History
+    # We fetch SesionTutoria entries for this student in this class's context
+    # Or for simplicity given the current seed approach, we might just look at completed SesionProgramada
+    # But ideally:
+    historial_sesiones = (
+        db.query(SesionProgramada)
+        .filter(SesionProgramada.id_clase == clase_id)
+        .filter(SesionProgramada.estado == 'REALIZADA')
+        .order_by(SesionProgramada.fecha_hora_inicio.desc())
+        .all()
+    )
+
+    return templates.TemplateResponse(
+        "admin/tutorado_detalle.html",
+        {
+            "request": request,
+            "user": usuario,
+            "clase": clase,
+            "estudiante": estudiante,
+            "historial_sesiones": historial_sesiones
+        },
+    )
+
+@router.get("/clases/{clase_id}/tutorados/{estudiante_id}/editar")
+def editar_tutorado(
+    request: Request,
+    clase_id: int,
+    estudiante_id: int,
+    db: Session = Depends(get_db)
+):
+    # 1. Admin Mock
+    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+
+    # 2. Get Class & Student
+    clase = ClaseService.get_clase_detalle(db, clase_id)
+    if not clase:
+         raise HTTPException(status_code=404, detail="Clase no encontrada")
+    
+    estudiante = db.query(Estudiante).filter(Estudiante.id == estudiante_id).first()
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+
+    # 3. Get Tutors for dropdown
+    tutores = db.query(Tutor).join(Usuario).all()
+
+    return templates.TemplateResponse(
+        "admin/tutorado_editar.html",
+        {
+            "request": request,
+            "user": usuario,
+            "clase": clase,
+            "estudiante": estudiante,
+            "tutores": tutores
+        },
+    )
+
+@router.post("/clases/{clase_id}/tutorados/{estudiante_id}/editar")
+def guardar_edicion_tutorado(
+    request: Request,
+    clase_id: int,
+    estudiante_id: int,
+    nombres: str = Form(...),
+    apellidos: str = Form(...),
+    dni: str = Form(...),
+    codigo: str = Form(...),
+    correo: str = Form(None),
+    telefono: str = Form(None),
+    # direccion: str = Form(None) # Not receiving this yet as not in model
+    db: Session = Depends(get_db)
+):
+    # 1. Get Student
+    estudiante = db.query(Estudiante).filter(Estudiante.id == estudiante_id).first()
+    if not estudiante:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+
+    # 2. Update fields
+    estudiante.nombres = nombres
+    estudiante.apellidos = apellidos
+    estudiante.dni = dni
+    estudiante.codigo = codigo
+    estudiante.correo = correo
+    estudiante.telefono = telefono
+    
+    db.commit()
+
+    # 3. Redirect to detail
+    return RedirectResponse(
+        url=f"/admin/clases/{clase_id}/tutorados/{estudiante_id}",
+        status_code=303
+    )
+
 #--------------------------------
 
 @router.get("/clases/{clase_id}/editar")

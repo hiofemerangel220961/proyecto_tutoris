@@ -60,11 +60,11 @@
         {% if sesiones %}
         {% for sesion in sesiones %}
         <div class="session-card">
-            <p><strong>Resumen:</strong> {{ sesion.tema or 'Tutoria de acompañamiento' }}
+            <p><strong>Resumen:</strong> {{ sesion.resumen or 'Tutoria de acompañamiento' }}
             </p>
             <p><strong>Ambiente:</strong> {{ sesion.ambiente.codigo if sesion.ambiente else
                 (clase.ambiente.codigo if clase.ambiente else 'N/A') }}</p>
-            <p><strong>{{ sesion.fecha.strftime('%d/%m/%Y') }}</strong></p>
+            <p><strong>{{ sesion.fecha_hora_inicio.strftime('%d/%m/%Y') }}</strong></p>
         </div>
         {% endfor %}
         {% else %}
@@ -88,7 +88,8 @@
         <!-- Filas -->
         {% if clase.asignaciones %}
         {% for asignacion in clase.asignaciones %}
-        <div class="sesiones-item sesiones-row" onclick="window.location.href='#';">
+        <div class="sesiones-item sesiones-row"
+            onclick="window.location.href='/admin/clases/{{ clase.id }}/tutorados/{{ asignacion.estudiante.id }}';">
             <div>{{ asignacion.estudiante.nombres }} {{ asignacion.estudiante.apellidos }}</div>
             <div>{{ clase.carrera.nombre }}</div>
             <div class="col-center">13</div> <!-- Placeholder para sesiones -->

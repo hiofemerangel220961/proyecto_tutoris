@@ -213,8 +213,8 @@
                             {% if sesiones %}
                             {% for sesion in sesiones %}
                             <tr class="history-row" onclick="window.location.href='/admin/tutorias/{{ sesion.id }}';">
-                                <td>{{ sesion.fecha.strftime('%d/%m/%Y') }}</td>
-                                <td>{{ sesion.tema or 'Sin tema' }}</td>
+                                <td>{{ sesion.fecha_hora_inicio.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ sesion.resumen or 'Sin tema' }}</td>
                                 <td>{{ clase.tutor.usuario.nombres }} {{ clase.tutor.usuario.apellidos }}</td>
                                 <td>{{ clase.semestre.codigo if clase.semestre else 'N/A' }}</td>
                                 <td>{{ sesion.ambiente.codigo if sesion.ambiente else (clase.ambiente.codigo if

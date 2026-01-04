@@ -11,6 +11,7 @@ class Tutor(Base):
     
     codigo_docente = Column(String, nullable=True)
     oficina = Column(String, nullable=True)
+    id_ambiente_defecto = Column(Integer, ForeignKey("Ambiente.id_ambiente"), nullable=True)
     activo = Column("estado_activo", Boolean, default=True)
 
     # Relaciones

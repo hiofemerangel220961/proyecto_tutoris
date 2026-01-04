@@ -19,6 +19,8 @@ class Estudiante(Base):
     id_carrera = Column(Integer, ForeignKey("Carrera.id_carrera"), nullable=False)
     
     estado_academico = Column(String, default="REGULAR") # REGULAR, RETIRADO, EGRESADO
+    fecha_ingreso = Column(Date, nullable=True)
+    fecha_egreso = Column(Date, nullable=True)
 
     # Relaciones
     usuario = relationship("Usuario")

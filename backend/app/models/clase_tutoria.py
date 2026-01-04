@@ -25,4 +25,4 @@ class ClaseTutoria(Base):
     asignaciones = relationship("AsignacionTutorado", back_populates="clase")
     
     # Lista de sesiones programadas
-    sesiones = relationship("Sesion", back_populates="clase")
+    sesiones_programadas = relationship("SesionProgramada", back_populates="clase")

@@ -10,6 +10,7 @@ class Usuario(Base):
     id_usuario = Column(Integer, primary_key=True, index=True)
     nombres = Column(String, nullable=False)
     apellidos = Column(String, nullable=False)
+    dni = Column(String, nullable=True) # Added to match diagram
     correo = Column(String, unique=True, index=True, nullable=False)
     telefono = Column(String, nullable=True)  # string para evitar líos
     contrasena_hash = Column(String, nullable=False)
