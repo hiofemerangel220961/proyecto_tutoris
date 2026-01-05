@@ -8,6 +8,7 @@ from ...db.deps import get_db
 from ...models.usuario import Usuario
 from ...models.rol import Rol
 from ...models.solicitud_cuenta import SolicitudCuenta
+from ...core.security import hash_password
 
 router = APIRouter(tags=["admin-usuarios"])
 
@@ -113,7 +114,7 @@ def aceptar_solicitud(solicitud_id: int, request: Request, db: Session = Depends
                 apellidos=sol.apellidos,
                 correo=sol.correo,
                 # Default password or logic to send email. For demo: 123456
-                contrasena_hash="hashed_secret", # Import helper if needed, simplified here
+                contrasena_hash=hash_password("123456"), 
                 id_rol=rol.id_rol,
                 telefono="000000000",
                 dni="00000000",

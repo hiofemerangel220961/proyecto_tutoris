@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración - Tutoris{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-title {
+        color: #312E81;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+    }
+
+    .config-card {
+        background-color: #E0E7FF;
+        /* Light purple/blue background */
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 900px;
+        /* height: 400px;  Optional if we want fixed height like screenshot */
+    }
+
+    /* Common Button Styles */
+    .config-btn {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        /* Or appropriate width */
+        padding: 12px 24px;
+        margin-bottom: 1.5rem;
+        border: none;
+        border-radius: 25px;
+        /* Pill shape */
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        /* Text aligned left as per screenshot? Or center? Screenshot looks centered-ish but maybe left in pill. Let's center for now or standard. Screenshot 1 text is left aligned in the button? No, looks centered. */
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .config-btn:last-child {
+        margin-bottom: 0;
+    }
+
+    /* State: Active/Ready to be clicked (Purple) */
+    .config-btn.btn-active {
+        background-color: #3730A3;
+        /* Dark purple */
+        color: white;
+        box-shadow: 0 4px 6px rgba(55, 48, 163, 0.2);
+    }
+
+    .config-btn.btn-active:hover {
+        background-color: #312E81;
+    }
+
+    /* State: Disabled/Done/Future (Gray) */
+    .config-btn.btn-disabled {
+        background-color: #8da2bb;
+        /* Muted slate/gray blue */
+        color: #F3F4F6;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 20px;">
+    <h1 class="config-title">Configuración</h1>
+
+    <div class="config-card">
+        <!-- Button 1: Cerrar Semestre -->
+        <button id="btn-cerrar" class="config-btn btn-active" onclick="handleAction('cerrar')">
+            Cerrar semestre actual: 2025-II
+        </button>
+
+        <!-- Button 2: Actualizar Datos -->
+        <button id="btn-actualizar" class="config-btn btn-disabled" disabled onclick="handleAction('actualizar')">
+            Actualizar datos estudiantes
+        </button>
+
+        <!-- Button 3: Iniciar Nuevo Semestre -->
+        <button id="btn-iniciar" class="config-btn btn-disabled" disabled onclick="handleAction('iniciar')">
+            Iniciar nuevo semestre
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // State machine logic
+    // Step 1: Ready to Close
+    // Step 2: Ready to Update
+    // Step 3: Ready to Start
+
+    function handleAction(action) {
+        const btnCerrar = document.getElementById('btn-cerrar');
+        const btnActualizar = document.getElementById('btn-actualizar');
+        const btnIniciar = document.getElementById('btn-iniciar');
+
+        if (action === 'cerrar') {
+            // Confirm implementation not strictly requested but good UX
+            // if (!confirm('¿Estás seguro de cerrar el semestre actual?')) return;
+
+            // Transition: Close Done -> Enable Update
+            setDisabled(btnCerrar);
+            // Optional: Change text to indicate status? simpler to just keep disabled state color
+
+            setActive(btnActualizar);
+        } else if (action === 'actualizar') {
+            // Transition: Update Done -> Enable Start
+            setDisabled(btnActualizar);
+            setActive(btnIniciar);
+        } else if (action === 'iniciar') {
+            // Transition: Start Done -> Reset or Finish
+            setDisabled(btnIniciar);
+
+            // For demo loop:
+            alert('¡Nuevo semestre iniciado con éxito!');
+
+            // Reset to initial state for demo purposes?
+            // Or just leave it disabled.
+            // Let's reset to make it "playable"
+            setTimeout(() => {
+                setActive(btnCerrar);
+                // Maybe update the semester text to show progression
+                btnCerrar.innerText = "Cerrar semestre actual: 2026-I";
+            }, 1000);
+        }
+    }
+
+    function setActive(btn) {
+        btn.classList.remove('btn-disabled');
+        btn.classList.add('btn-active');
+        btn.disabled = false;
+    }
+
+    function setDisabled(btn) {
+        btn.classList.remove('btn-active');
+        btn.classList.add('btn-disabled');
+        btn.disabled = true;
+    }
+</script>
+{% endblock %}

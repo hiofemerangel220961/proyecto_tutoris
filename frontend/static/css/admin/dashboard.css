@@ -607,3 +607,59 @@ a.sesiones-item {
     color: #6b7280;
     padding: 20px;
 }
+
+/* =========================================
+   CONFIGURACIÓN PAGE
+   ========================================= */
+.config-container {
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 1400px;
+    box-sizing: border-box;
+}
+
+.config-card {
+    background-color: #E8EFFF;
+    border-radius: 12px;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 250px;
+}
+
+.config-btn {
+    display: block;
+    width: 100%;
+    max-width: 350px;
+    padding: 12px 20px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: var(--white);
+    position: relative;
+    padding-left: 25px;
+}
+
+.config-btn.btn-active {
+    background-color: var(--accent-blue);
+    opacity: 1;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.config-btn.btn-active:hover {
+    background-color: #4338ca;
+    transform: translateY(-2px);
+}
+
+.config-btn.btn-disabled {
+    background-color: #9CA3AF;
+    opacity: 0.7;
+    cursor: not-allowed;
+    box-shadow: none;
+}

@@ -74,7 +74,7 @@
                 </li>
                 <!-- Botón para configurar semestres -->
                 <li class="nav-item {% if active_page == 'configuracion' %}active{% endif %}">
-                    <a href="/admin/semestres-view">
+                    <a href="/admin/configuracion">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path
@@ -126,7 +126,7 @@
 
                     <!-- Texto Usuario -->
                     <div class="user-info-text">
-                        <a href="#" class="user-name-top" title="Editar perfil">
+                        <a href="/admin/perfil" class="user-name-top" title="Editar perfil">
                             {{ user.nombres }} {{ user.apellidos }}
                         </a>
 

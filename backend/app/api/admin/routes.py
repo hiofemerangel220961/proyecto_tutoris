@@ -59,3 +59,31 @@ def admin_dashboard(
         "clases": clases,
         "filters": {"search": search, "carrera_id": carrera_id} # Para mantener lo que escribió el usuario
     })
+
+@router.get("/configuracion")
+def admin_configuracion(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    # Obtener usuario admin (simulado/hardcoded como en dashboard por ahora)
+    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+
+    return templates.TemplateResponse("admin/configuracion.html", {
+        "request": request,
+        "user": usuario,
+        "active_page": "configuracion" 
+    })
+
+@router.get("/perfil")
+def admin_perfil(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    # Obtener el mismo usuario admin
+    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+
+    return templates.TemplateResponse("admin/perfil_editar.html", {
+        "request": request,
+        "user": usuario,
+        # No active_page needed or maybe 'profile', but it's not in sidebar
+    })

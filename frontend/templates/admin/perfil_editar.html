@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Perfil - Tutoris{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-title {
+        color: #312E81;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+    }
+
+    .profile-card {
+        background-color: #E0E7FF;
+        border-radius: 12px;
+        padding: 40px;
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+    }
+
+    .form-column {
+        flex: 2;
+    }
+
+    .avatar-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-left: 20px;
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
+        /* Optional separator */
+    }
+
+    .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        width: 120px;
+        font-weight: 600;
+        color: #1F2937;
+    }
+
+    .form-input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        font-size: 0.95rem;
+    }
+
+    .form-input:disabled {
+        background-color: #F3F4F6;
+        color: #6B7280;
+    }
+
+    .avatar-preview {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        /* Circular */
+        background-color: #D1D5DB;
+        /* Placeholder gray */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .btn-upload {
+        background-color: #4F46E5;
+        color: white;
+        padding: 8px 32px;
+        border-radius: 20px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        max-width: 180px;
+        text-align: center;
+    }
+
+    .btn-upload:hover {
+        background-color: #4338CA;
+    }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: flex-end;
+        /* Right align as per screenshot */
+        gap: 20px;
+        margin-top: 2rem;
+    }
+
+    .btn-action {
+        padding: 10px 40px;
+        border-radius: 20px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .btn-cancel {
+        background-color: #4F46E5;
+        /* Based on screenshot it looks same color as save? Or maybe slightly lighter? Screenshot shows both purple/blue. Let's use same primary. */
+        background-color: #5b5fc7;
+        /* Slightly lighter purple */
+        color: white;
+    }
+
+    .btn-save {
+        background-color: #4338CA;
+        /* Darker purple */
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            flex-direction: column-reverse;
+        }
+
+        .avatar-column {
+            border-left: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 20px;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 20px;">
+    <h1 class="profile-title">Editar datos personales</h1>
+
+    <div class="profile-card">
+        <!-- Columna Izquierda: Formulario -->
+        <div class="form-column">
+            <div class="form-group">
+                <label class="form-label">Nombre:</label>
+                <input type="text" class="form-input" value="{{ user.nombres }}" name="nombres">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Apellidos:</label>
+                <input type="text" class="form-input" value="{{ user.apellidos }}" name="apellidos">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">DNI:</label>
+                <input type="text" class="form-input" value="{{ user.dni or '73792643' }}" name="dni">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Codigo:</label>
+                <input type="text" class="form-input" value="{{ user.codigo or '220987' }}" name="codigo">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Dirección:</label>
+                <input type="text" class="form-input" value="{{ user.direccion or 'Por ahi' }}" name="direccion">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email:</label>
+                <input type="email" class="form-input" value="{{ user.correo }}" name="email">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Telefono</label>
+                <input type="text" class="form-input" value="{{ user.telefono or '987623564' }}" name="telefono">
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Avatar -->
+        <div class="avatar-column">
+            <div class="avatar-preview">
+                {% if user.foto_perfil_url %}
+                <img id="avatar-img" src="{{ user.foto_perfil_url }}" alt="Avatar">
+                {% else %}
+                <!-- SVG Placeholder similar to design -->
+                <svg id="avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5"
+                    style="width: 80px; height: 80px;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <img id="avatar-img" src="" alt="Avatar Preview" style="display: none;">
+                {% endif %}
+            </div>
+            <!-- Hidden File Input -->
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            <button class="btn-upload" type="button"
+                onclick="document.getElementById('file-input').click()">Subir</button>
+        </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="bottom-actions">
+        <!-- Link to back/dashboard for cancel -->
+        <a href="/admin/dashboard" style="text-decoration: none;">
+            <button class="btn-action btn-cancel" type="button">Cancelar</button>
+        </a>
+        <button class="btn-action btn-save" type="button" onclick="handleSave()">Guardar</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const fileInput = document.getElementById('file-input');
+    const avatarImg = document.getElementById('avatar-img');
+    const avatarPlaceholder = document.getElementById('avatar-placeholder');
+
+    fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                avatarImg.src = e.target.result;
+                avatarImg.style.display = 'block';
+                if (avatarPlaceholder) {
+                    avatarPlaceholder.style.display = 'none';
+                }
+            }
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function handleSave() {
+        // En una implementación real, aquí se enviaría el form y el archivo
+        alert('Datos y foto de perfil guardados exitosamente (Demo)');
+    }
+</script>
+{% endblock %}
