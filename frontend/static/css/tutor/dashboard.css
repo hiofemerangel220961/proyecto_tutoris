@@ -1,0 +1,63 @@
+.session-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.session-card-link:hover .session-card {
+  box-shadow: 0 6px 15px rgba(46, 37, 172, 0.10);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+.session-empty {
+  color: #6B7280;
+  padding: 10px 0;
+}
+
+.tutorados-box {
+  background: #E8EFFF;
+  border-radius: 18px;
+  padding: 18px 22px;
+}
+
+.tutorados-headers {
+  display: grid;
+  grid-template-columns: 2fr 2fr 0.7fr;
+  padding: 0 10px 10px 10px;
+  color: #6B7280;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tutorado-row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 0.7fr;
+  align-items: center;
+  background: #F7F7FC;
+  border-radius: 18px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.tutorado-row:hover {
+  background: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.center {
+  text-align: center;
+  font-weight: 700;
+}
+
+.tutorados-empty {
+  text-align: center;
+  color: #6B7280;
+  padding: 20px;
+}

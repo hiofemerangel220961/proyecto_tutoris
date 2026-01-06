@@ -8,6 +8,8 @@ from ...db.deps import get_db
 from ...models.usuario import Usuario
 from ...models.rol import Rol
 from ...models.solicitud_cuenta import SolicitudCuenta
+from ...models.tutor import Tutor
+from ...models.carrera import Carrera
 from ...core.security import hash_password
 
 router = APIRouter(tags=["admin-usuarios"])
@@ -121,6 +123,38 @@ def aceptar_solicitud(solicitud_id: int, request: Request, db: Session = Depends
                 estado="ACTIVO"
             )
             db.add(new_user)
+            db.flush() # Para obtener el id_usuario
+
+            # Si el rol es TUTOR, creamos el registro en la tabla Tutor
+            if rol.nombre_rol == "TUTOR":
+                # Buscamos una carrera por defecto para el tutor (ej: la primera)
+                carrera = db.query(Carrera).first()
+                new_tutor = Tutor(
+                    id_usuario=new_user.id_usuario,
+                    id_carrera=carrera.id if carrera else 1, # Fallback a 1 si no hay carreras
+                    codigo_docente="DOC001", # Placeholder
+                    oficina="Pendiente",
+                    activo=True
+                )
+                db.add(new_tutor)
+
+            # Si el rol es ESTUDIANTE, creamos el registro en la tabla Estudiante
+            if rol.nombre_rol == "ESTUDIANTE":
+                # Buscamos una carrera por defecto para el estudiante
+                carrera = db.query(Carrera).first()
+                new_est = Estudiante(
+                    id_usuario=new_user.id_usuario,
+                    codigo=f"COD{new_user.id_usuario:05d}", # Generar código temporal
+                    dni="00000000",
+                    nombres=new_user.nombres,
+                    apellidos=new_user.apellidos,
+                    correo=new_user.correo,
+                    telefono="000000000",
+                    id_carrera=carrera.id if carrera else 1,
+                    estado_academico="REGULAR"
+                )
+                db.add(new_est)
+
             # Remove request or mark approved
             db.delete(sol) 
             db.commit()

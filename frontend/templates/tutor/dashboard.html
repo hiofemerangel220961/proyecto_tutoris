@@ -1,35 +1,80 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Panel Tutor - Sistema de Tutorías</title>
-    <link rel="stylesheet" href="/static/css/auth/login.css">
-</head>
-<body>
-    <div class="page-wrapper">
-        <div class="login-card">
-            <div class="login-logo">
-                <span class="logo-placeholder">ST</span>
-            </div>
+{% extends "tutor/base.html" %}
 
-            <div class="login-header">
-                <h1>Panel de Tutor</h1>
-                <p>Has iniciado sesión como <strong>TUTOR</strong>.</p>
-            </div>
+{% block title %}Dashboard Tutor - Tutoris{% endblock %}
 
-            <div style="margin-top: 16px; font-size: 0.95rem;">
-                Aquí más adelante verás:
-                <ul>
-                    <li>Tutorías programadas</li>
-                    <li>Historial de sesiones</li>
-                    <li>Lista de estudiantes asignados</li>
-                </ul>
-            </div>
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/tutor/dashboard.css">
+{% endblock %}
 
-            <div style="margin-top: 16px; font-size: 0.85rem;">
-                <a href="/login">Cerrar sesión</a>
-            </div>
-        </div>
+{% block content %}
+<div class="welcome-area">
+  <h1 class="welcome-text">Bienvenido <span>{{ user.nombres }} {{ user.apellidos }}</span></h1>
+</div>
+
+<!-- Card info Tutor (estilo similar a clase_detalle admin) -->
+<div class="tutoria-info-card">
+  <div class="class-header-content">
+    <div class="tutor-avatar-large">
+      <svg style="width:40px;height:40px;color:#2A3F96;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
     </div>
-</body>
-</html>
+
+    <div class="tutor-details">
+      <p><span class="label">Tutor:</span> {{ user.nombres }} {{ user.apellidos }}</p>
+      <p><span class="label">DNI:</span> {{ user.dni or "—" }}</p>
+      <p><span class="label">Correo Electrónico:</span> {{ user.correo }}</p>
+      <p><span class="label">Teléfono:</span> {{ user.telefono or "—" }}</p>
+      <p><span class="label">Ambiente:</span> {{ ambiente_str }}</p>
+    </div>
+
+    <div class="action-buttons">
+      <a class="btn-action" href="#" onclick="return false;">Descargar Detalles</a>
+    </div>
+  </div>
+</div>
+
+<!-- Tutorías Programadas -->
+<h3 class="sesiones-title">Tutorías Programadas {% if semestre %}{{ semestre.codigo }}{% endif %}</h3>
+
+<div class="sessions-list-container">
+  {% if sesiones_programadas %}
+    {% for s in sesiones_programadas %}
+      <a class="session-card-link" href="/tutor/sesiones/programadas/{{ s.id }}/iniciar">
+        <div class="session-card">
+          <p><strong>Resumen:</strong> {{ s.resumen or "—" }}</p>
+          <p><strong>Ambiente:</strong> {{ s.ambiente.codigo if s.ambiente else "N/A" }}</p>
+          <p><strong>{{ s.fecha_hora_inicio.strftime("%d/%m/%Y") }}</strong></p>
+        </div>
+      </a>
+    {% endfor %}
+  {% else %}
+    <div class="session-empty">No hay tutorías programadas.</div>
+  {% endif %}
+</div>
+
+<!-- Tutorados -->
+<h3 class="sesiones-title">Tutorados</h3>
+
+<div class="tutorados-box">
+  <div class="tutorados-headers">
+    <div>Nombres y Apellidos</div>
+    <div>Carrera</div>
+    <div class="center">Sesiones</div>
+  </div>
+
+  {% if tutorados %}
+    {% for t in tutorados %}
+      <a class="tutorado-row" href="/tutor/tutorados/{{ t.estudiante.id }}">
+        <div>{{ t.estudiante.nombres }} {{ t.estudiante.apellidos }}</div>
+        <div>{{ t.carrera.nombre if t.carrera else "—" }}</div>
+        <div class="center">{{ t.sesiones }}</div>
+      </a>
+    {% endfor %}
+  {% else %}
+    <div class="tutorados-empty">No hay tutorados asignados.</div>
+  {% endif %}
+</div>
+{% endblock %}

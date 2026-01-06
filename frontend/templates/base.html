@@ -21,7 +21,6 @@
             </div>
 
             <ul class="nav-menu">
-                <!-- Item Activo -->
                 <li class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
                     <a href="/admin/dashboard">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -31,6 +30,7 @@
                         Inicio
                     </a>
                 </li>
+
                 <li class="nav-item {% if active_page == 'programar' %}active{% endif %}">
                     <a href="/admin/tutorias/programar">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -41,6 +41,7 @@
                         Programar tutoría
                     </a>
                 </li>
+
                 <li class="nav-item {% if active_page == 'tutorias' %}active{% endif %}">
                     <a href="/admin/tutorias/programadas">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -52,6 +53,7 @@
                         Tutorías programadas
                     </a>
                 </li>
+
                 <li class="nav-item {% if active_page == 'historial' %}active{% endif %}">
                     <a href="/admin/tutorias/historial">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,6 +63,7 @@
                         Historial de tutorías
                     </a>
                 </li>
+
                 <li class="nav-item {% if active_page == 'usuarios' %}active{% endif %}">
                     <a href="/admin/usuarios/administradores">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -72,7 +75,7 @@
                         Gestionar Usuarios
                     </a>
                 </li>
-                <!-- Botón para configurar semestres -->
+
                 <li class="nav-item {% if active_page == 'configuracion' %}active{% endif %}">
                     <a href="/admin/configuracion">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -104,9 +107,9 @@
             <!-- Header Superior -->
             <header class="top-header">
                 <div class="user-profile-section">
+
                     <!-- Campana -->
                     <div class="notification-bell">
-                        <!-- SVG de Campana de alta calidad -->
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9599 4.07997 18.2599 5.37997 18.2599H18.66C19.96 18.2599 20.45 16.9599 19.74 15.7699L18.59 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z"
@@ -119,8 +122,6 @@
                                 d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601"
                                 stroke="#6B7280" stroke-width="1.5" stroke-miterlimit="10" />
                         </svg>
-
-                        <!-- El puntito rojo -->
                         <span class="badge-dot"></span>
                     </div>
 
@@ -129,32 +130,51 @@
                         <a href="/admin/perfil" class="user-name-top" title="Editar perfil">
                             {{ user.nombres }} {{ user.apellidos }}
                         </a>
-
                         <span class="user-role-top">{{ user.rol.nombre_rol | capitalize }}</span>
                     </div>
 
                     <!-- Avatar -->
-                    <div class="avatar-circle">
-                        {% if user.foto_perfil_url %}
-                        <img src="{{ user.foto_perfil_url }}" alt="Avatar">
-                        {% else %}
-                        <svg style="width:20px;height:20px;color:#333;" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        {% endif %}
+                    <div class="avatar-circle" style="overflow:hidden; width:36px; height:36px; border-radius:50%;">
+                        <!-- IMG SIEMPRE EXISTE (para actualizarlo con JS) -->
+                        <img id="header-avatar-img"
+                            src="{% if user and user.foto_perfil_url %}{{ user.foto_perfil_url }}{% else %}{% endif %}"
+                            alt="Avatar"
+                            style="width:100%;height:100%;object-fit:cover;display:{% if user and user.foto_perfil_url %}block{% else %}none{% endif %};"
+                            onerror="this.style.display='none'; document.getElementById('header-avatar-fallback').style.display='flex';" />
+
+                        <!-- FALLBACK -->
+                        <span id="header-avatar-fallback"
+                            style="display:{% if user and user.foto_perfil_url %}none{% else %}flex{% endif %};align-items:center;justify-content:center;width:100%;height:100%;">
+                            <svg style="width:20px;height:20px;color:#333;" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
                     </div>
+
                 </div>
             </header>
 
-            {% block content %}
-            {% endblock %}
+            {% block content %}{% endblock %}
 
         </main>
     </div>
 
     {% block extra_js %}{% endblock %}
+
+    <!-- Helper opcional: permite actualizar avatar desde cualquier página -->
+    <script>
+        window.setHeaderAvatar = function (url) {
+            const img = document.getElementById("header-avatar-img");
+            const fallback = document.getElementById("header-avatar-fallback");
+            if (!img || !fallback) return;
+
+            img.src = url;
+            img.style.display = "block";
+            fallback.style.display = "none";
+        }
+    </script>
 </body>
 
 </html>

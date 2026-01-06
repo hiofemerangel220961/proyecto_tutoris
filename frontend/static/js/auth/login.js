@@ -35,13 +35,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const usuario = data.usuario;
             const rol = usuario.rol;
 
-            // Redirección según el rol
+            // Redirección según el rol con email como query param
             if (rol === "ADMINISTRADOR") {
-                window.location.href = "/admin/dashboard";
+                window.location.href = `/admin/dashboard?email=${encodeURIComponent(usuario.correo)}`;
             } else if (rol === "TUTOR") {
-                window.location.href = "/tutor/dashboard";
+                window.location.href = `/tutor/dashboard?email=${encodeURIComponent(usuario.correo)}`;
             } else if (rol === "VERIFICADOR") {
-                window.location.href = "/verificador/dashboard";
+                window.location.href = `/verificador/dashboard?email=${encodeURIComponent(usuario.correo)}`;
+            } else if (rol === "ESTUDIANTE") {
+                // Por ahora no hay dashboard de estudiante, mostrar mensaje o redirigir a perfil
+                alert("Inicio de sesión exitoso. El dashboard de estudiante está en desarrollo.");
+                window.location.href = "/";
             } else {
                 errorMessage.textContent = "Rol desconocido";
                 errorMessage.style.display = "block";

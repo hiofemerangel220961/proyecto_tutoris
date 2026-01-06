@@ -1,89 +1,84 @@
 from pathlib import Path
-from fastapi import APIRouter, Request, Depends
+import os
+
+from fastapi import APIRouter, Request, Depends, UploadFile, File, HTTPException, Form
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from typing import Optional
 
 from ...db.deps import get_db
-from ...services.semestre import SemestreService
-from ...schemas.semestre import SemestreRead, SemestreCreate
-from ...models.usuario import Usuario  # <--- Importamos el modelo Usuario
-from backend.app.services.clase import ClaseService
-from backend.app.models.semestre import Semestre
-from backend.app.models.carrera import Carrera
+from ...models.usuario import Usuario
 
+router = APIRouter(prefix="/admin", tags=["admin"])
 
-router = APIRouter()
-
-# Configuración de templates
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
 TEMPLATES_DIR = BASE_DIR / "frontend" / "templates"
+STATIC_DIR = BASE_DIR / "frontend" / "static"
+AVATAR_DIR = STATIC_DIR / "uploads" / "avatars"
+AVATAR_DIR.mkdir(parents=True, exist_ok=True)
+
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
-@router.get("/dashboard")
-def admin_dashboard(
-    request: Request, 
-    db: Session = Depends(get_db),
-    search: Optional[str] = None,       # Parámetro de búsqueda
-    carrera_id: Optional[int] = None    # Parámetro de filtro
-):
-    # 1. Obtener Admin (Tulio)
-    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
-
-    # 2. Obtener Semestre Activo (o el último creado si no hay activos)
-    # Buscamos uno que esté ACTIVO
-    semestre_actual = db.query(Semestre).filter(Semestre.activo == True).first()
-    
-    # Si no hay activo, tomamos el último creado para que no salga error (modo prueba)
-    if not semestre_actual:
-        semestre_actual = db.query(Semestre).order_by(Semestre.anio.desc(), Semestre.periodo.desc()).first()
-
-    # 3. Listar Carreras (para el filtro desplegable)
-    carreras = db.query(Carrera).filter(Carrera.activo == True).all()
-
-    # 4. Obtener las Clases (usando el servicio nuevo)
-    clases = []
-    if semestre_actual:
-        clases = ClaseService.get_dashboard_clases(
-            db, 
-            semestre_id=semestre_actual.id, 
-            search=search, 
-            carrera_id=carrera_id
-        )
-
-    return templates.TemplateResponse("admin/dashboard.html", {
-        "request": request,
-        "user": usuario,
-        "semestre": semestre_actual,
-        "carreras": carreras,
-        "clases": clases,
-        "filters": {"search": search, "carrera_id": carrera_id} # Para mantener lo que escribió el usuario
-    })
-
-@router.get("/configuracion")
-def admin_configuracion(
-    request: Request,
-    db: Session = Depends(get_db)
-):
-    # Obtener usuario admin (simulado/hardcoded como en dashboard por ahora)
-    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
-
-    return templates.TemplateResponse("admin/configuracion.html", {
-        "request": request,
-        "user": usuario,
-        "active_page": "configuracion" 
-    })
 
 @router.get("/perfil")
-def admin_perfil(
-    request: Request,
-    db: Session = Depends(get_db)
-):
-    # Obtener el mismo usuario admin
-    usuario = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+def ver_perfil(request: Request, db: Session = Depends(get_db)):
+    # Por ahora, igual que tu proyecto: admin “mock”
+    user = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+    return templates.TemplateResponse(
+        "admin/perfil_editar.html",
+        {"request": request, "user": user, "active_page": "perfil"},
+    )
 
-    return templates.TemplateResponse("admin/perfil_editar.html", {
-        "request": request,
-        "user": usuario,
-        # No active_page needed or maybe 'profile', but it's not in sidebar
-    })
+@router.get("/perfil")
+def ver_perfil(request: Request, db: Session = Depends(get_db)):
+    admin = db.query(Usuario).filter(Usuario.correo == "admin@tutorias.com").first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    return templates.TemplateResponse(
+        "admin/perfil.html",
+        {
+            "request": request,
+            "user": admin,
+            "active_page": "perfil",
+        }
+    )
+
+@router.post("/perfil/foto")
+async def subir_foto_perfil(
+    request: Request,
+    foto: UploadFile = File(...),          # OJO: el campo debe llamarse "foto"
+    email: str | None = Form(None),        # opcional (por si luego lo usas)
+    db: Session = Depends(get_db),
+):
+    # 1) Usuario
+    user_email = email or "admin@tutorias.com"
+    user = db.query(Usuario).filter(Usuario.correo == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    # 2) Validar tipo
+    if not foto.content_type or not foto.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="El archivo debe ser una imagen")
+
+    # 3) Guardar archivo
+    original_name = foto.filename or "avatar"
+    _, ext = os.path.splitext(original_name)
+    ext = ext.lower() if ext else ".jpg"
+
+    filename = f"user_{user.id_usuario}{ext}"
+    filepath = AVATAR_DIR / filename
+
+    content = await foto.read()
+    if len(content) > 2 * 1024 * 1024:  # 2MB (opcional)
+        raise HTTPException(status_code=400, detail="Imagen muy grande (máx 2MB)")
+
+    with open(filepath, "wb") as f:
+        f.write(content)
+
+    # 4) Guardar URL en BD (sirve porque /static está montado a frontend/static)
+    user.foto_perfil_url = f"/static/uploads/avatars/{filename}"
+    db.commit()
+
+    # 5) Redirigir
+    return RedirectResponse(url="/admin/perfil", status_code=303)

@@ -27,6 +27,7 @@ from .core.security import hash_password
 # Importamos los routers
 from .api.auth import routes as auth_router
 from .api.admin import routes as admin_router
+from .api.admin import dashboard as admin_dashboard_router
 from .api.admin import clases as admin_clases_router # <-- NUEVA RUTA
 from .api.tutor import routes as tutor_router
 from .api.verificador import routes as verificador_router
@@ -78,15 +79,15 @@ def init_data():
             )
             db.add(nuevo_admin)
             db.commit()
-            print(f"✅ Usuario Admin creado: {admin_email} (Tulio Tribiño)")
+            print(f"[OK] Usuario Admin creado: {admin_email} (Tulio Tribiño)")
         else:
             # Opcional: Si ya existe, podrías querer actualizarle el nombre si es el viejo
             # pero lo más rápido es borrar el archivo tutorias.db para que se regenere,
             # o simplemente dejarlo así.
-            print("ℹ️ El usuario Admin ya existe.")
+            print("[INFO] El usuario Admin ya existe.")
             
     except Exception as e:
-        print(f"❌ Error inicializando datos: {e}")
+        print(f"[ERROR] Error inicializando datos: {e}")
         db.rollback()
     finally:
         db.close()
@@ -99,16 +100,18 @@ app = FastAPI(title="Sistema de Tutorías")
 # Montar archivos estáticos
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+
 # --- REGISTRO DE RUTAS ---
 
 # 1. Rutas de Autenticación (Login, Register, etc.)
 app.include_router(auth_router.router, tags=["auth"])
 
 # 2. Rutas de Admin
-app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
+app.include_router(admin_dashboard_router.router, tags=["admin-dashboard"])
+app.include_router(admin_router.router, tags=["admin"])
 app.include_router(admin_tutorias_router.router, tags=["admin-tutorias"])
-app.include_router(admin_clases_router.router, prefix="/admin", tags=["admin-clases"])
-app.include_router(admin_usuarios_router.router, prefix="/admin", tags=["admin-usuarios"])
+app.include_router(admin_clases_router.router, tags=["admin-clases"])
+app.include_router(admin_usuarios_router.router, tags=["admin-usuarios"])
 
 
 # 3. Rutas de Tutor
